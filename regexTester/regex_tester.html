@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Tester</title>
+  <!-- Include TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#EF4444', // red-500
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .match-highlight {
+      background-color: rgba(239, 68, 68, 0.2);
+      border-bottom: 1px solid rgba(239, 68, 68, 0.5);
+    }
+
+    .group-highlight {
+      border-bottom: 2px dashed rgba(239, 68, 68, 0.7);
+    }
+
+    .capture-group {
+      border-radius: 2px;
+      padding: 1px 0;
+      margin: 0 -1px;
+    }
+
+    .group-1 { background-color: rgba(59, 130, 246, 0.2); } /* blue */
+    .group-2 { background-color: rgba(16, 185, 129, 0.2); } /* green */
+    .group-3 { background-color: rgba(245, 158, 11, 0.2); } /* yellow */
+    .group-4 { background-color: rgba(139, 92, 246, 0.2); } /* purple */
+    .group-5 { background-color: rgba(236, 72, 153, 0.2); } /* pink */
+    .group-6 { background-color: rgba(6, 182, 212, 0.2); } /* cyan */
+    .group-7 { background-color: rgba(245, 158, 11, 0.2); } /* amber */
+    .group-8 { background-color: rgba(165, 180, 252, 0.2); } /* indigo-300 */
+    .group-9 { background-color: rgba(251, 146, 60, 0.2); } /* orange-400 */
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto py-6 px-4 max-w-5xl">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Regex Tester</h1>
+          <p class="text-gray-600">Test and debug regular expressions with real-time highlighting</p>
+        </div>
+        <a href="../dashboard/index.html" class="mt-4 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-600 transition">
+          Back to Dashboard
+        </a>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Left Column: Input & Controls -->
+      <div class="md:col-span-1">
+        <!-- Regex Input Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 class="text-lg font-bold mb-4 text-gray-800">Regular Expression</h2>
+          <div class="relative mb-4">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+              /
+            </div>
+            <input id="regexPattern" type="text" class="block w-full pl-6 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter regex pattern" value="(\w+)@(\w+)\.(\w+)">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+              /
+            </div>
+          </div>
+          
+          <!-- Flags -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Flags</label>
+            <div class="flex flex-wrap gap-3">
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="flagGlobal" class="form-checkbox h-4 w-4 text-primary rounded border-gray-300" checked>
+                <span class="ml-2 text-sm text-gray-700">g (global)</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="flagIgnoreCase" class="form-checkbox h-4 w-4 text-primary rounded border-gray-300">
+                <span class="ml-2 text-sm text-gray-700">i (ignore case)</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="flagMultiline" class="form-checkbox h-4 w-4 text-primary rounded border-gray-300">
+                <span class="ml-2 text-sm text-gray-700">m (multiline)</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="flagDotAll" class="form-checkbox h-4 w-4 text-primary rounded border-gray-300">
+                <span class="ml-2 text-sm text-gray-700">s (dotall)</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="flagUnicode" class="form-checkbox h-4 w-4 text-primary rounded border-gray-300">
+                <span class="ml-2 text-sm text-gray-700">u (unicode)</span>
+              </label>
+            </div>
+          </div>
+          
+          <!-- Quick Reference -->
+          <div>
+            <details>
+              <summary class="cursor-pointer text-sm font-medium text-primary hover:text-red-600 mb-2">
+                Quick Reference
+              </summary>
+              <div class="text-xs bg-gray-50 p-3 rounded-lg border">
+                <table class="w-full">
+                  <tbody>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">\d</td>
+                      <td class="py-1">Any digit (0-9)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">\w</td>
+                      <td class="py-1">Any word character (a-z, A-Z, 0-9, _)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">\s</td>
+                      <td class="py-1">Any whitespace character</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">.</td>
+                      <td class="py-1">Any character except newline</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">^</td>
+                      <td class="py-1">Start of string/line</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">$</td>
+                      <td class="py-1">End of string/line</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">*</td>
+                      <td class="py-1">0 or more</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">+</td>
+                      <td class="py-1">1 or more</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">?</td>
+                      <td class="py-1">0 or 1</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">{n}</td>
+                      <td class="py-1">Exactly n</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">{n,}</td>
+                      <td class="py-1">n or more</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">{n,m}</td>
+                      <td class="py-1">Between n and m</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">[abc]</td>
+                      <td class="py-1">Any of a, b, or c</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">(x)</td>
+                      <td class="py-1">Capture group</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">(?:x)</td>
+                      <td class="py-1">Non-capturing group</td>
+                    </tr>
+                    <tr>
+                      <td class="py-1 pr-3 font-mono text-gray-600">x|y</td>
+                      <td class="py-1">Match either x or y</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+        </div>
+        
+        <!-- Common Patterns -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-lg font-bold mb-4 text-gray-800">Common Patterns</h2>
+          <div class="space-y-2">
+            <button class="common-pattern w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition" data-pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" data-name="Email Validation">
+              <span class="block font-medium">Email Validation</span>
+              <code class="text-xs text-gray-500">^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$</code>
+            </button>
+            <button class="common-pattern w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition" data-pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$" data-name="Password Strength">
+              <span class="block font-medium">Password Strength (8+ chars, letters & numbers)</span>
+              <code class="text-xs text-gray-500">^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$</code>
+            </button>
+            <button class="common-pattern w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition" data-pattern="^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$" data-name="URL">
+              <span class="block font-medium">URL Validation</span>
+              <code class="text-xs text-gray-500">^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$</code>
+            </button>
+            <button class="common-pattern w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition" data-pattern="^\d{3}-\d{3}-\d{4}$" data-name="US Phone Number">
+              <span class="block font-medium">US Phone Number (xxx-xxx-xxxx)</span>
+              <code class="text-xs text-gray-500">^\d{3}-\d{3}-\d{4}$</code>
+            </button>
+            <button class="common-pattern w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition" data-pattern="^\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}$" data-name="Credit Card">
+              <span class="block font-medium">Credit Card Number (16 digits)</span>
+              <code class="text-xs text-gray-500">^\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}$</code>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Test String & Results -->
+      <div class="md:col-span-2">
+        <!-- Test String Input -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 class="text-lg font-bold mb-4 text-gray-800">Test String</h2>
+          <textarea id="testString" rows="8" class="w-full p-3 border rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter text to test the regular expression against">John Doe <john.doe@example.com>
+Contact us at support@regex-tester.com or sales@regex-tester.org
+Visit our website https://www.regex-tester.com</textarea>
+        </div>
+        
+        <!-- Results -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-lg font-bold mb-4 text-gray-800">Results</h2>
+          
+          <!-- Results Tabs -->
+          <div class="border-b mb-4">
+            <div class="flex">
+              <button id="matchesTabBtn" class="px-4 py-2 text-primary border-b-2 border-primary">Matches</button>
+              <button id="highlightTabBtn" class="px-4 py-2 text-gray-500 hover:text-gray-700">Highlight</button>
+              <button id="explanationTabBtn" class="px-4 py-2 text-gray-500 hover:text-gray-700">Explanation</button>
+            </div>
+          </div>
+          
+          <!-- Matches Tab -->
+          <div id="matchesTab">
+            <div id="matchCount" class="text-sm text-gray-600 mb-4">No matches found</div>
+            
+            <div id="noMatchesMessage" class="py-8 text-center text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <p>No matches found for this regular expression.</p>
+              <p class="text-sm mt-2">Try adjusting your pattern or test string.</p>
+            </div>
+            
+            <!-- Match List -->
+            <div id="matchList" class="hidden space-y-3">
+              <!-- Will be populated with JavaScript -->
+            </div>
+          </div>
+          
+          <!-- Highlight Tab -->
+          <div id="highlightTab" class="hidden">
+            <div class="bg-gray-50 p-4 rounded-lg font-mono text-sm whitespace-pre-wrap" id="highlightedText">
+              <!-- Will be populated with JavaScript -->
+            </div>
+          </div>
+          
+          <!-- Explanation Tab -->
+          <div id="explanationTab" class="hidden">
+            <div id="regexExplanation" class="text-sm space-y-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // DOM Elements
+    const regexPattern = document.getElementById('regexPattern');
+    const testString = document.getElementById('testString');
+    const flagGlobal = document.getElementById('flagGlobal');
+    const flagIgnoreCase = document.getElementById('flagIgnoreCase');
+    const flagMultiline = document.getElementById('flagMultiline');
+    const flagDotAll = document.getElementById('flagDotAll');
+    const flagUnicode = document.getElementById('flagUnicode');
+    
+    const matchesTabBtn = document.getElementById('matchesTabBtn');
+    const highlightTabBtn = document.getElementById('highlightTabBtn');
+    const explanationTabBtn = document.getElementById('explanationTabBtn');
+    const matchesTab = document.getElementById('matchesTab');
+    const highlightTab = document.getElementById('highlightTab');
+    const explanationTab = document.getElementById('explanationTab');
+    
+    const matchCount = document.getElementById('matchCount');
+    const matchList = document.getElementById('matchList');
+    const noMatchesMessage = document.getElementById('noMatchesMessage');
+    const highlightedText = document.getElementById('highlightedText');
+    const regexExplanation = document.getElementById('regexExplanation');
+    
+    const commonPatterns = document.querySelectorAll('.common-pattern');
+    
+    // Function to get the current flags as a string
+    function getFlags() {
+      let flags = '';
+      if (flagGlobal.checked) flags += 'g';
+      if (flagIgnoreCase.checked) flags += 'i';
+      if (flagMultiline.checked) flags += 'm';
+      if (flagDotAll.checked) flags += 's';
+      if (flagUnicode.checked) flags += 'u';
+      return flags;
+    }
+    
+    // Function to create a RegExp object from the pattern and flags
+    function createRegExp() {
+      const pattern = regexPattern.value;
+      const flags = getFlags();
+      
+      try {
+        return new RegExp(pattern, flags);
+      } catch (error) {
+        return null;
+      }
+    }
+    
+    // Function to test the regular expression against the test string
+    function testRegex() {
+      const regex = createRegExp();
+      const text = testString.value;
+      
+      if (!regex) {
+        displayErrorMessage();
+        return;
+      }
+      
+      // Get all matches
+      const matches = getAllMatches(regex, text);
+      
+      // Update UI with results
+      updateMatchesTab(regex, text, matches);
+      updateHighlightTab(regex, text, matches);
+      updateExplanationTab(regex);
+    }
+    
+    // Function to get all matches including capture groups
+    function getAllMatches(regex, text) {
+      const matches = [];
+      const isGlobal = regex.flags.includes('g');
+      
+      if (isGlobal) {
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+          matches.push({
+            full: match[0],
+            groups: match.slice(1),
+            index: match.index
+          });
+        }
+      } else {
+        const match = regex.exec(text);
+        if (match) {
+          matches.push({
+            full: match[0],
+            groups: match.slice(1),
+            index: match.index
+          });
+        }
+      }
+      
+      return matches;
+    }
+    
+    // Function to update the Matches tab
+    function updateMatchesTab(regex, text, matches) {
+      if (matches.length === 0) {
+        matchCount.textContent = 'No matches found';
+        noMatchesMessage.classList.remove('hidden');
+        matchList.classList.add('hidden');
+        return;
+      }
+      
+      matchCount.textContent = `${matches.length} match${matches.length > 1 ? 'es' : ''} found`;
+      noMatchesMessage.classList.add('hidden');
+      matchList.classList.remove('hidden');
+      
+      // Clear previous matches
+      matchList.innerHTML = '';
+      
+      // Add new matches
+      matches.forEach((match, index) => {
+        const matchItem = document.createElement('div');
+        matchItem.className = 'bg-gray-50 p-4 rounded-lg border';
+        
+        // Match title
+        const matchTitle = document.createElement('div');
+        matchTitle.className = 'font-medium mb-2';
+        matchTitle.textContent = `Match ${index + 1}:`;
+        
+        // Full match
+        const fullMatch = document.createElement('div');
+        fullMatch.className = 'font-mono text-sm p-2 bg-white rounded border mb-2';
+        fullMatch.textContent = match.full;
+        
+        // Match info
+        const matchInfo = document.createElement('div');
+        matchInfo.className = 'text-xs text-gray-600 mb-3';
+        matchInfo.textContent = `Position: ${match.index}, Length: ${match.full.length}`;
+        
+        // Add the elements to the match item
+        matchItem.appendChild(matchTitle);
+        matchItem.appendChild(fullMatch);
+        matchItem.appendChild(matchInfo);
+        
+        // Add capture groups if any
+        if (match.groups.some(g => g !== undefined)) {
+          const groupsTitle = document.createElement('div');
+          groupsTitle.className = 'text-sm font-medium mb-2';
+          groupsTitle.textContent = 'Capture Groups:';
+          matchItem.appendChild(groupsTitle);
+          
+          const groupsList = document.createElement('div');
+          groupsList.className = 'space-y-2';
+          
+          match.groups.forEach((group, i) => {
+            if (group !== undefined) {
+              const groupItem = document.createElement('div');
+              groupItem.className = `flex items-center`;
+              
+              const groupLabel = document.createElement('div');
+              groupLabel.className = `w-16 text-xs font-medium text-gray-600`;
+              groupLabel.textContent = `Group ${i + 1}:`;
+              
+              const groupValue = document.createElement('div');
+              groupValue.className = `flex-1 font-mono text-xs p-1.5 bg-white rounded border group-${i + 1}`;
+              groupValue.textContent = group;
+              
+              groupItem.appendChild(groupLabel);
+              groupItem.appendChild(groupValue);
+              groupsList.appendChild(groupItem);
+            }
+          });
+          
+          matchItem.appendChild(groupsList);
+        }
+        
+        matchList.appendChild(matchItem);
+      });
+    }
+    
+    // Function to update the Highlight tab
+    function updateHighlightTab(regex, text, matches) {
+      if (matches.length === 0) {
+        highlightedText.textContent = text;
+        return;
+      }
+      
+      // Create HTML with highlighted matches
+      let html = '';
+      let lastIndex = 0;
+      
+      // Sort matches by index to handle them in order
+      const sortedMatches = [...matches].sort((a, b) => a.index - b.index);
+      
+      sortedMatches.forEach(match => {
+        // Add text before the match
+        html += escapeHtml(text.substring(lastIndex, match.index));
+        
+        // Add the match with highlighting
+        html += `<span class="match-highlight">${escapeHtml(match.full)}</span>`;
+        
+        // Update lastIndex
+        lastIndex = match.index + match.full.length;
+      });
+      
+      // Add any remaining text
+      html += escapeHtml(text.substring(lastIndex));
+      
+      // Replace newlines with <br> to preserve whitespace
+      html = html.replace(/\n/g, '<br>');
+      
+      highlightedText.innerHTML = html;
+    }
+    
+    // Function to escape HTML special characters
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Function to update the Explanation tab
+    function updateExplanationTab(regex) {
+      if (!regex) {
+        regexExplanation.innerHTML = '<p class="text-red-500">Invalid regular expression</p>';
+        return;
+      }
+      
+      try {
+        const pattern = regex.source;
+        const flags = regex.flags;
+        
+        let explanation = '';
+        
+        // Add pattern explanation
+        explanation += `<div class="bg-gray-50 p-4 rounded-lg border">
+          <h3 class="font-medium mb-2">Pattern: <code class="font-mono bg-white px-1 py-0.5 rounded text-primary">${escapeHtml(pattern)}</code></h3>
+          <div class="space-y-3">
+            ${generatePatternExplanation(pattern)}
+          </div>
+        </div>`;
+        
+        // Add flags explanation
+        explanation += `<div class="bg-gray-50 p-4 rounded-lg border">
+          <h3 class="font-medium mb-2">Flags: <code class="font-mono bg-white px-1 py-0.5 rounded text-primary">${flags || '(none)'}</code></h3>
+          <ul class="list-disc list-inside space-y-1 text-gray-700">
+            ${flags.includes('g') ? '<li><strong>g</strong> (global): Find all matches rather than stopping after the first match</li>' : ''}
+            ${flags.includes('i') ? '<li><strong>i</strong> (ignore case): Case-insensitive matching</li>' : ''}
+            ${flags.includes('m') ? '<li><strong>m</strong> (multiline): ^ and $ match the start and end of each line, not just the whole string</li>' : ''}
+            ${flags.includes('s') ? '<li><strong>s</strong> (dotall): Allows . to match newline characters</li>' : ''}
+            ${flags.includes('u') ? '<li><strong>u</strong> (unicode): Treat pattern as Unicode code points</li>' : ''}
+            ${flags === '' ? '<li>No flags used</li>' : ''}
+          </ul>
+        </div>`;
+        
+        regexExplanation.innerHTML = explanation;
+      } catch (error) {
+        regexExplanation.innerHTML = `<p class="text-red-500">Error generating explanation: ${error.message}</p>`;
+      }
+    }
+    
+    // Function to generate an explanation of a regex pattern
+    function generatePatternExplanation(pattern) {
+      // Simple explanation of common regex components
+      const explanations = [
+        { regex: /\\d/g, explain: '\\d matches any digit character (0-9)' },
+        { regex: /\\w/g, explain: '\\w matches any word character (alphanumeric + underscore)' },
+        { regex: /\\s/g, explain: '\\s matches any whitespace character' },
+        { regex: /\\b/g, explain: '\\b matches a word boundary' },
+        { regex: /\./g, explain: '. matches any character except newline' },
+        { regex: /\\\./g, explain: '\\. matches a literal period' },
+        { regex: /\^/g, explain: '^ matches the start of the string/line' },
+        { regex: /\$/g, explain: '$ matches the end of the string/line' },
+        { regex: /\*/g, explain: '* matches the preceding item 0 or more times' },
+        { regex: /\+/g, explain: '+ matches the preceding item 1 or more times' },
+        { regex: /\?/g, explain: '? matches the preceding item 0 or 1 time' },
+        { regex: /\{(\d+)\}/g, explain: '{n} matches the preceding item exactly n times' },
+        { regex: /\{(\d+),\}/g, explain: '{n,} matches the preceding item at least n times' },
+        { regex: /\{(\d+),(\d+)\}/g, explain: '{n,m} matches the preceding item between n and m times' },
+        { regex: /\|/g, explain: '| acts as an OR operator, matching either the expression before or after it' },
+        { regex: /\(/g, explain: '( begins a capturing group' },
+        { regex: /\)/g, explain: ') ends a capturing group' },
+        { regex: /\[/g, explain: '[ begins a character class' },
+        { regex: /\]/g, explain: '] ends a character class' },
+        { regex: /\[\^/g, explain: '[^ begins a negated character class' }
+      ];
+      
+      let result = '<ul class="list-disc list-inside space-y-1 text-gray-700">';
+      
+      // Check for anchors
+      if (pattern.startsWith('^') && pattern.endsWith('$')) {
+        result += '<li>This pattern must match the entire string from start to end.</li>';
+      } else if (pattern.startsWith('^')) {
+        result += '<li>This pattern must match from the beginning of the string/line.</li>';
+      } else if (pattern.endsWith('$')) {
+        result += '<li>This pattern must match until the end of the string/line.</li>';
+      }
+      
+      // Check for capture groups
+      const captureGroups = (pattern.match(/\([^?][^)]*\)/g) || []).length;
+      if (captureGroups > 0) {
+        result += `<li>Contains ${captureGroups} capturing group${captureGroups > 1 ? 's' : ''}, which can be accessed from match results.</li>`;
+      }
+      
+      // Check for character classes
+      const charClasses = (pattern.match(/\[[^\]]*\]/g) || []).length;
+      if (charClasses > 0) {
+        result += `<li>Contains ${charClasses} character class${charClasses > 1 ? 'es' : ''}, each matching one character from the specified set.</li>`;
+      }
+      
+      // Add general explanations
+      for (const { regex, explain } of explanations) {
+        if (regex.test(pattern)) {
+          result += `<li>${explain}</li>`;
+          // Reset lastIndex to ensure we can test again
+          regex.lastIndex = 0;
+        }
+      }
+      
+      // Check for common patterns
+      if (/\d{3}-\d{3}-\d{4}/.test(pattern)) {
+        result += '<li>This pattern matches a US phone number format (e.g., 123-456-7890).</li>';
+      }
+      
+      if (/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(pattern)) {
+        result += '<li>This pattern looks like an email address validator.</li>';
+      }
+      
+      if (/https?:\/\//.test(pattern)) {
+        result += '<li>This pattern matches URLs starting with http:// or https://.</li>';
+      }
+      
+      result += '</ul>';
+      return result;
+    }
+    
+    // Function to display error message
+    function displayErrorMessage() {
+      matchCount.textContent = 'Invalid regular expression';
+      matchCount.className = 'text-sm text-red-500 mb-4';
+      
+      noMatchesMessage.classList.remove('hidden');
+      noMatchesMessage.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-red-400 mb-3" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <p>Invalid regular expression pattern.</p>
+        <p class="text-sm mt-2">Check your syntax and try again.</p>
+      `;
+      
+      matchList.classList.add('hidden');
+      highlightedText.textContent = testString.value;
+      regexExplanation.innerHTML = '<p class="text-red-500">Invalid regular expression</p>';
+    }
+    
+    // Event listeners
+    regexPattern.addEventListener('input', debounce(testRegex, 300));
+    testString.addEventListener('input', debounce(testRegex, 300));
+    flagGlobal.addEventListener('change', testRegex);
+    flagIgnoreCase.addEventListener('change', testRegex);
+    flagMultiline.addEventListener('change', testRegex);
+    flagDotAll.addEventListener('change', testRegex);
+    flagUnicode.addEventListener('change', testRegex);
+    
+    // Tab switching
+    matchesTabBtn.addEventListener('click', () => {
+      matchesTab.classList.remove('hidden');
+      highlightTab.classList.add('hidden');
+      explanationTab.classList.add('hidden');
+      
+      matchesTabBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+      matchesTabBtn.classList.remove('text-gray-500');
+      
+      highlightTabBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+      highlightTabBtn.classList.add('text-gray-500');
+      
+      explanationTabBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+      explanationTabBtn.classList.add('text-gray-500');
+    });
+    
+    highlightTabBtn.addEventListener('click', () => {
+      matchesTab.classList.add('hidden');
+      highlightTab.classList.remove('hidden');
+      explanationTab.classList.add('hidden');
+      
+      matchesTabBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+      matchesTabBtn.classList.add('text-gray-500');
+      
+      highlightTabBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+      highlightTabBtn.classList.remove('text-gray-500');
+      
+      explanationTabBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+      explanationTabBtn.classList.add('text-gray-500');
+    });
+    
+    explanationTabBtn.addEventListener('click', () => {
+      matchesTab.classList.add('hidden');
+      highlightTab.classList.add('hidden');
+      explanationTab.classList.remove('hidden');
+      
+      matchesTabBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+      matchesTabBtn.classList.add('text-gray-500');
+      
+      highlightTabBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+      highlightTabBtn.classList.add('text-gray-500');
+      
+      explanationTabBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+      explanationTabBtn.classList.remove('text-gray-500');
+    });
+    
+    // Common patterns
+    commonPatterns.forEach(button => {
+      button.addEventListener('click', () => {
+        regexPattern.value = button.getAttribute('data-pattern');
+        testRegex();
+      });
+    });
+    
+    // Debounce function to limit how often a function is called
+    function debounce(func, delay) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+      };
+    }
+    
+    // Initialize the page
+    testRegex();
+  </script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Currency Converter</title>
+  <!-- Include TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#F59E0B', // amber-500
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .currency-flag {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-size: cover;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+  <div class="container mx-auto px-4 max-w-xl">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Currency Converter</h1>
+          <p class="text-gray-600">Convert between different world currencies</p>
+        </div>
+        <a href="../dashboard/index.html" class="mt-4 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-amber-600 transition">
+          Back to Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Converter Card -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <!-- From Currency Section -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2" for="amount">I want to convert</label>
+        <div class="flex items-center">
+          <input type="number" id="amount" class="flex-grow px-4 py-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" value="1" min="0.01" step="0.01" required>
+          <select id="fromCurrency" class="py-3 px-4 bg-gray-50 border border-l-0 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            <option value="USD">USD - US Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="JPY">JPY - Japanese Yen</option>
+            <option value="CAD">CAD - Canadian Dollar</option>
+            <option value="AUD">AUD - Australian Dollar</option>
+            <option value="CHF">CHF - Swiss Franc</option>
+            <option value="CNY">CNY - Chinese Yuan</option>
+            <option value="INR">INR - Indian Rupee</option>
+            <option value="MXN">MXN - Mexican Peso</option>
+            <option value="BRL">BRL - Brazilian Real</option>
+            <option value="KRW">KRW - South Korean Won</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Swap Button -->
+      <div class="flex justify-center my-4">
+        <button id="swapButton" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-3 rounded-full transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- To Currency Section -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2" for="toCurrency">To</label>
+        <select id="toCurrency" class="w-full py-3 px-4 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+          <option value="EUR" selected>EUR - Euro</option>
+          <option value="USD">USD - US Dollar</option>
+          <option value="GBP">GBP - British Pound</option>
+          <option value="JPY">JPY - Japanese Yen</option>
+          <option value="CAD">CAD - Canadian Dollar</option>
+          <option value="AUD">AUD - Australian Dollar</option>
+          <option value="CHF">CHF - Swiss Franc</option>
+          <option value="CNY">CNY - Chinese Yuan</option>
+          <option value="INR">INR - Indian Rupee</option>
+          <option value="MXN">MXN - Mexican Peso</option>
+          <option value="BRL">BRL - Brazilian Real</option>
+          <option value="KRW">KRW - South Korean Won</option>
+        </select>
+      </div>
+      
+      <!-- Convert Button -->
+      <div class="mb-6">
+        <button id="convertButton" class="w-full py-3 bg-primary text-white rounded-lg hover:bg-amber-600 transition flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          Convert
+        </button>
+      </div>
+      
+      <!-- Result Display -->
+      <div class="p-5 bg-gray-50 rounded-lg border text-center">
+        <div id="result" class="text-2xl font-semibold text-gray-800">
+          1.00 USD = 0.93 EUR
+        </div>
+        <div id="rate" class="text-sm text-gray-500 mt-2">
+          1 USD = 0.93 EUR
+        </div>
+      </div>
+      
+      <!-- Last Updated -->
+      <div class="mt-4 text-right text-xs text-gray-500">
+        <span id="lastUpdated">Using exchange rates as of March 31, 2023</span>
+      </div>
+    </div>
+    
+    <!-- Exchange Rate Table -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Popular Exchange Rates</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="popularRates1" class="space-y-2"></div>
+        <div id="popularRates2" class="space-y-2"></div>
+      </div>
+    </div>
+    
+    <!-- Currency Information -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">About Currency Conversion</h2>
+      <p class="text-gray-600 mb-4">
+        Currency exchange rates are constantly fluctuating due to factors like economic indicators, interest rates, geopolitical events, and market sentiment. 
+        This tool provides approximate conversion values using fixed exchange rates for demonstration purposes.
+      </p>
+      <p class="text-gray-600 mb-2">
+        <span class="font-medium">Please note:</span> For financial transactions, always check the current market rates from official financial institutions.
+      </p>
+      <div class="text-xs text-gray-500 italic">
+        This tool is for educational purposes only and may not reflect real-time exchange rates.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fixed exchange rates (as of a specific date for demonstration purposes)
+    // In a production app, you would use an API to get real-time rates
+    const exchangeRates = {
+      "USD": { 
+        "EUR": 0.93, "GBP": 0.79, "JPY": 149.82, "CAD": 1.36, 
+        "AUD": 1.51, "CHF": 0.87, "CNY": 7.25, "INR": 83.18,
+        "MXN": 17.19, "BRL": 5.04, "KRW": 1345.42, "USD": 1 
+      },
+      "EUR": { 
+        "USD": 1.08, "GBP": 0.85, "JPY": 161.66, "CAD": 1.47, 
+        "AUD": 1.63, "CHF": 0.94, "CNY": 7.82, "INR": 89.72,
+        "MXN": 18.54, "BRL": 5.44, "KRW": 1451.90, "EUR": 1 
+      },
+      "GBP": { 
+        "USD": 1.27, "EUR": 1.18, "JPY": 189.64, "CAD": 1.72, 
+        "AUD": 1.91, "CHF": 1.10, "CNY": 9.17, "INR": 105.16,
+        "MXN": 21.73, "BRL": 6.37, "KRW": 1701.80, "GBP": 1 
+      },
+      "JPY": { 
+        "USD": 0.0067, "EUR": 0.0062, "GBP": 0.0053, "CAD": 0.0091, 
+        "AUD": 0.0101, "CHF": 0.0058, "CNY": 0.048, "INR": 0.55,
+        "MXN": 0.11, "BRL": 0.034, "KRW": 8.98, "JPY": 1 
+      },
+      "CAD": { 
+        "USD": 0.73, "EUR": 0.68, "GBP": 0.58, "JPY": 110.16, 
+        "AUD": 1.11, "CHF": 0.64, "CNY": 5.33, "INR": 61.16,
+        "MXN": 12.63, "BRL": 3.71, "KRW": 989.28, "CAD": 1 
+      },
+      "AUD": { 
+        "USD": 0.66, "EUR": 0.61, "GBP": 0.52, "JPY": 99.22, 
+        "CAD": 0.90, "CHF": 0.58, "CNY": 4.80, "INR": 55.09,
+        "MXN": 11.39, "BRL": 3.34, "KRW": 891.01, "AUD": 1 
+      },
+      "CHF": { 
+        "USD": 1.15, "EUR": 1.06, "GBP": 0.91, "JPY": 172.21, 
+        "CAD": 1.56, "AUD": 1.73, "CNY": 8.33, "INR": 95.61,
+        "MXN": 19.76, "BRL": 5.80, "KRW": 1547.61, "CHF": 1 
+      },
+      "CNY": { 
+        "USD": 0.14, "EUR": 0.13, "GBP": 0.11, "JPY": 20.67, 
+        "CAD": 0.19, "AUD": 0.21, "CHF": 0.12, "INR": 11.48,
+        "MXN": 2.37, "BRL": 0.70, "KRW": 185.85, "CNY": 1 
+      },
+      "INR": { 
+        "USD": 0.012, "EUR": 0.011, "GBP": 0.0095, "JPY": 1.80, 
+        "CAD": 0.016, "AUD": 0.018, "CHF": 0.010, "CNY": 0.087,
+        "MXN": 0.21, "BRL": 0.061, "KRW": 16.18, "INR": 1 
+      },
+      "MXN": { 
+        "USD": 0.058, "EUR": 0.054, "GBP": 0.046, "JPY": 8.71, 
+        "CAD": 0.079, "AUD": 0.088, "CHF": 0.051, "CNY": 0.42,
+        "INR": 4.84, "BRL": 0.29, "KRW": 78.27, "MXN": 1 
+      },
+      "BRL": { 
+        "USD": 0.20, "EUR": 0.18, "GBP": 0.16, "JPY": 29.73, 
+        "CAD": 0.27, "AUD": 0.30, "CHF": 0.17, "CNY": 1.44,
+        "INR": 16.51, "MXN": 3.41, "KRW": 267.02, "BRL": 1 
+      },
+      "KRW": { 
+        "USD": 0.00074, "EUR": 0.00069, "GBP": 0.00059, "JPY": 0.11, 
+        "CAD": 0.0010, "AUD": 0.0011, "CHF": 0.00065, "CNY": 0.0054,
+        "INR": 0.062, "MXN": 0.013, "BRL": 0.0037, "KRW": 1 
+      }
+    };
+
+    // Currency descriptions to display in information section
+    const currencyInfo = {
+      "USD": "The United States dollar is the official currency of the United States and several other countries.",
+      "EUR": "The euro is the official currency of 19 of the 27 member states of the European Union.",
+      "GBP": "The pound sterling is the official currency of the United Kingdom and several crown dependencies.",
+      "JPY": "The Japanese yen is the official currency of Japan.",
+      "CAD": "The Canadian dollar is the official currency of Canada.",
+      "AUD": "The Australian dollar is the official currency of Australia and several Pacific Island states.",
+      "CHF": "The Swiss franc is the official currency of Switzerland and Liechtenstein.",
+      "CNY": "The Chinese yuan is the official currency of the People's Republic of China.",
+      "INR": "The Indian rupee is the official currency of India.",
+      "MXN": "The Mexican peso is the official currency of Mexico.",
+      "BRL": "The Brazilian real is the official currency of Brazil.",
+      "KRW": "The South Korean won is the official currency of South Korea."
+    };
+
+    // Flag images for each currency
+    const currencyFlags = {
+      "USD": "🇺🇸",
+      "EUR": "🇪🇺",
+      "GBP": "🇬🇧",
+      "JPY": "🇯🇵",
+      "CAD": "🇨🇦",
+      "AUD": "🇦🇺",
+      "CHF": "🇨🇭",
+      "CNY": "🇨🇳",
+      "INR": "🇮🇳",
+      "MXN": "🇲🇽",
+      "BRL": "🇧🇷",
+      "KRW": "🇰🇷"
+    };
+
+    // DOM Elements
+    const amountInput = document.getElementById("amount");
+    const fromCurrencySelect = document.getElementById("fromCurrency");
+    const toCurrencySelect = document.getElementById("toCurrency");
+    const convertButton = document.getElementById("convertButton");
+    const swapButton = document.getElementById("swapButton");
+    const resultDiv = document.getElementById("result");
+    const rateDiv = document.getElementById("rate");
+    const lastUpdatedSpan = document.getElementById("lastUpdated");
+    const popularRates1 = document.getElementById("popularRates1");
+    const popularRates2 = document.getElementById("popularRates2");
+
+    // Function to convert currency
+    function convertCurrency() {
+      const amount = parseFloat(amountInput.value);
+      const fromCurrency = fromCurrencySelect.value;
+      const toCurrency = toCurrencySelect.value;
+      
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.textContent = "Please enter a valid amount";
+        return;
+      }
+      
+      const rate = exchangeRates[fromCurrency][toCurrency];
+      const convertedAmount = amount * rate;
+      
+      // Format the result
+      const formattedAmount = formatCurrency(amount, fromCurrency);
+      const formattedResult = formatCurrency(convertedAmount, toCurrency);
+      
+      resultDiv.textContent = `${formattedAmount} = ${formattedResult}`;
+      rateDiv.textContent = `1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
+      
+      // Update currency info display
+      updateCurrencyInfo(fromCurrency, toCurrency);
+    }
+    
+    // Format currency values
+    function formatCurrency(value, currency) {
+      // Get the number of decimal places appropriate for the currency
+      let decimals = 2;
+      if (currency === 'JPY' || currency === 'KRW') decimals = 0;
+      
+      // Format with the appropriate number of decimals
+      return value.toLocaleString(undefined, { 
+        minimumFractionDigits: decimals, 
+        maximumFractionDigits: decimals 
+      }) + ' ' + currency;
+    }
+    
+    // Update currency information in the UI
+    function updateCurrencyInfo(fromCurrency, toCurrency) {
+      // Add currency info if needed
+    }
+    
+    // Swap currencies function
+    function swapCurrencies() {
+      const tempCurrency = fromCurrencySelect.value;
+      fromCurrencySelect.value = toCurrencySelect.value;
+      toCurrencySelect.value = tempCurrency;
+      convertCurrency();
+    }
+    
+    // Display popular exchange rates
+    function displayPopularRates() {
+      // Base currencies to show popular rates for
+      const baseCurrencies = ['USD', 'EUR'];
+      const counterCurrencies = ['GBP', 'JPY', 'CAD', 'AUD', 'CNY', 'INR'];
+      
+      popularRates1.innerHTML = '';
+      popularRates2.innerHTML = '';
+      
+      baseCurrencies.forEach((baseCurrency, idx) => {
+        const container = idx === 0 ? popularRates1 : popularRates2;
+        
+        counterCurrencies.forEach(counterCurrency => {
+          const rate = exchangeRates[baseCurrency][counterCurrency];
+          
+          const rateItem = document.createElement('div');
+          rateItem.className = 'flex items-center justify-between p-2 border-b border-gray-200';
+          
+          const fromFlag = currencyFlags[baseCurrency] || '';
+          const toFlag = currencyFlags[counterCurrency] || '';
+          
+          rateItem.innerHTML = `
+            <div class="flex items-center">
+              <span class="text-lg mr-2">${fromFlag}</span>
+              <span>1 ${baseCurrency}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-lg mr-2">${toFlag}</span>
+              <span class="font-medium">${rate.toFixed(4)} ${counterCurrency}</span>
+            </div>
+          `;
+          
+          container.appendChild(rateItem);
+        });
+      });
+    }
+
+    // Add event listeners
+    convertButton.addEventListener("click", convertCurrency);
+    swapButton.addEventListener("click", swapCurrencies);
+    
+    // Also convert when inputs change
+    amountInput.addEventListener("input", convertCurrency);
+    fromCurrencySelect.addEventListener("change", convertCurrency);
+    toCurrencySelect.addEventListener("change", convertCurrency);
+    
+    // Set current date in the last updated text
+    function setLastUpdatedDate() {
+      const now = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      lastUpdatedSpan.textContent = `Using exchange rates as of ${now.toLocaleDateString('en-US', options)}`;
+    }
+    
+    // Initialize
+    setLastUpdatedDate();
+    displayPopularRates();
+    convertCurrency();
+  </script>
+</body>
+</html>

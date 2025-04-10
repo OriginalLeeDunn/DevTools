@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Tool</title>
+  <!-- Include TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5', // indigo-600
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .calculator-key {
+      @apply flex-1 p-4 text-xl font-medium text-center bg-white dark:bg-gray-700 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-600 transition duration-100;
+    }
+    
+    .calculator-key-operation {
+      @apply bg-primary text-white hover:bg-indigo-700;
+    }
+    
+    .calculator-key-equal {
+      @apply bg-green-500 text-white hover:bg-green-600;
+    }
+    
+    .calculator-key-clear {
+      @apply bg-red-500 text-white hover:bg-red-600;
+    }
+    
+    .calculator-key-backspace {
+      @apply bg-amber-500 text-white hover:bg-amber-600;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto py-6 px-4 max-w-lg">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Math Tool</h1>
+          <p class="text-gray-600">Perform basic and scientific calculations</p>
+        </div>
+        <a href="../dashboard/index.html" class="mt-4 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-indigo-700 transition">
+          Back to Dashboard
+        </a>
+      </div>
+    </div>
+    
+    <!-- Calculator -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Display Area -->
+      <div class="relative p-4 bg-gray-50 dark:bg-gray-800 border-b">
+        <div class="text-right text-sm text-gray-500 dark:text-gray-400 h-6" id="calculationHistory"></div>
+        <input type="text" id="display" class="w-full bg-transparent text-right text-3xl font-medium text-gray-900 dark:text-white border-none focus:outline-none" value="0" readonly>
+        <div class="text-right text-sm text-gray-600 dark:text-gray-400 h-6" id="memoryIndicator"></div>
+      </div>
+      
+      <!-- Calculator Mode Toggle -->
+      <div class="border-b p-2 flex bg-gray-50 dark:bg-gray-800">
+        <button id="basicModeBtn" class="flex-1 py-1 px-2 text-sm font-medium rounded-lg bg-primary text-white">Basic</button>
+        <button id="scientificModeBtn" class="flex-1 py-1 px-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300">Scientific</button>
+      </div>
+      
+      <!-- Basic Calculator Keys -->
+      <div id="basicCalculator" class="p-3">
+        <div class="grid grid-cols-4 gap-2 mb-2">
+          <button class="calculator-key calculator-key-clear" data-key="clear">C</button>
+          <button class="calculator-key calculator-key-backspace" data-key="backspace">⌫</button>
+          <button class="calculator-key calculator-key-operation" data-key="%">%</button>
+          <button class="calculator-key calculator-key-operation" data-key="/">÷</button>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mb-2">
+          <button class="calculator-key" data-key="7">7</button>
+          <button class="calculator-key" data-key="8">8</button>
+          <button class="calculator-key" data-key="9">9</button>
+          <button class="calculator-key calculator-key-operation" data-key="*">×</button>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mb-2">
+          <button class="calculator-key" data-key="4">4</button>
+          <button class="calculator-key" data-key="5">5</button>
+          <button class="calculator-key" data-key="6">6</button>
+          <button class="calculator-key calculator-key-operation" data-key="-">−</button>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mb-2">
+          <button class="calculator-key" data-key="1">1</button>
+          <button class="calculator-key" data-key="2">2</button>
+          <button class="calculator-key" data-key="3">3</button>
+          <button class="calculator-key calculator-key-operation" data-key="+">+</button>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mb-2">
+          <button class="calculator-key" data-key="0">0</button>
+          <button class="calculator-key" data-key=".">.</button>
+          <button class="calculator-key" data-key="changeSign">±</button>
+          <button class="calculator-key calculator-key-equal" data-key="=">=</button>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+          <button class="calculator-key" data-key="mc">MC</button>
+          <button class="calculator-key" data-key="mr">MR</button>
+          <button class="calculator-key" data-key="mPlus">M+</button>
+          <button class="calculator-key" data-key="mMinus">M−</button>
+        </div>
+      </div>
+
+      <!-- Scientific Calculator Keys (Initially Hidden) -->
+      <div id="scientificCalculator" class="p-3 hidden">
+        <div class="grid grid-cols-5 gap-2 mb-2">
+          <button class="calculator-key calculator-key-clear" data-key="clear">C</button>
+          <button class="calculator-key calculator-key-backspace" data-key="backspace">⌫</button>
+          <button class="calculator-key" data-key="(">(</button>
+          <button class="calculator-key" data-key=")">)</button>
+          <button class="calculator-key calculator-key-operation" data-key="/">÷</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2 mb-2">
+          <button class="calculator-key" data-key="pi">π</button>
+          <button class="calculator-key" data-key="7">7</button>
+          <button class="calculator-key" data-key="8">8</button>
+          <button class="calculator-key" data-key="9">9</button>
+          <button class="calculator-key calculator-key-operation" data-key="*">×</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2 mb-2">
+          <button class="calculator-key" data-key="sqrt">√</button>
+          <button class="calculator-key" data-key="4">4</button>
+          <button class="calculator-key" data-key="5">5</button>
+          <button class="calculator-key" data-key="6">6</button>
+          <button class="calculator-key calculator-key-operation" data-key="-">−</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2 mb-2">
+          <button class="calculator-key" data-key="pow2">x²</button>
+          <button class="calculator-key" data-key="1">1</button>
+          <button class="calculator-key" data-key="2">2</button>
+          <button class="calculator-key" data-key="3">3</button>
+          <button class="calculator-key calculator-key-operation" data-key="+">+</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2 mb-2">
+          <button class="calculator-key" data-key="pow">xʸ</button>
+          <button class="calculator-key" data-key="0">0</button>
+          <button class="calculator-key" data-key=".">.</button>
+          <button class="calculator-key" data-key="changeSign">±</button>
+          <button class="calculator-key calculator-key-equal" data-key="=">=</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2">
+          <button class="calculator-key" data-key="sin">sin</button>
+          <button class="calculator-key" data-key="cos">cos</button>
+          <button class="calculator-key" data-key="tan">tan</button>
+          <button class="calculator-key" data-key="log">log</button>
+          <button class="calculator-key" data-key="ln">ln</button>
+        </div>
+        <div class="grid grid-cols-4 gap-2 mt-2">
+          <button class="calculator-key" data-key="mc">MC</button>
+          <button class="calculator-key" data-key="mr">MR</button>
+          <button class="calculator-key" data-key="mPlus">M+</button>
+          <button class="calculator-key" data-key="mMinus">M−</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History & Constants -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <div class="bg-white rounded-lg shadow-md p-3">
+        <h2 class="text-lg font-bold mb-2 text-gray-800">Calculation History</h2>
+        <div id="historyList" class="space-y-1 max-h-40 overflow-y-auto">
+          <div class="text-gray-500 text-center py-2 text-sm">No calculations yet</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-3">
+        <h2 class="text-lg font-bold mb-2 text-gray-800">Common Constants</h2>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="text-left p-2 rounded hover:bg-gray-100 text-sm" data-constant="pi">π (Pi) = 3.14159...</button>
+          <button class="text-left p-2 rounded hover:bg-gray-100 text-sm" data-constant="e">e = 2.71828...</button>
+          <button class="text-left p-2 rounded hover:bg-gray-100 text-sm" data-constant="golden">Golden Ratio = 1.61803...</button>
+          <button class="text-left p-2 rounded hover:bg-gray-100 text-sm" data-constant="speedOfLight">c (Speed of Light) = 2.998 × 10⁸ m/s</button>
+          <button class="text-left p-2 rounded hover:bg-gray-100 text-sm" data-constant="gravity">g (Gravity) = 9.80665 m/s²</button>
+          <button class="text-left p-2 rounded hover:bg-gray-100 text-sm" data-constant="avogadro">NA (Avogadro) = 6.022 × 10²³</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const display = document.getElementById('display');
+    const calculationHistory = document.getElementById('calculationHistory');
+    const memoryIndicator = document.getElementById('memoryIndicator');
+    const historyList = document.getElementById('historyList');
+    const basicModeBtn = document.getElementById('basicModeBtn');
+    const scientificModeBtn = document.getElementById('scientificModeBtn');
+    const basicCalculator = document.getElementById('basicCalculator');
+    const scientificCalculator = document.getElementById('scientificCalculator');
+    const calculatorKeys = document.querySelectorAll('.calculator-key');
+    const constantButtons = document.querySelectorAll('[data-constant]');
+
+    // Calculator State
+    let currentInput = '0';
+    let currentCalculation = '';
+    let lastResult = '';
+    let waitingForOperand = false;
+    let decimalAdded = false;
+    let memoryValue = 0;
+    let calculationsHistory = [];
+    
+    // Constants
+    const constants = {
+      pi: Math.PI,
+      e: Math.E,
+      golden: 1.61803398875,
+      speedOfLight: 299792458,
+      gravity: 9.80665,
+      avogadro: 6.02214076e23
+    };
+
+    // Update the display with current input
+    function updateDisplay() {
+      display.value = currentInput;
+    }
+
+    // Update the history display
+    function updateHistory() {
+      calculationHistory.textContent = currentCalculation;
+    }
+
+    // Add a calculation to the history list
+    function addToHistory(calculation, result) {
+      calculationsHistory.unshift({ calculation, result });
+      if (calculationsHistory.length > 10) calculationsHistory.pop();
+      
+      renderHistory();
+    }
+
+    // Render the history list
+    function renderHistory() {
+      if (calculationsHistory.length === 0) {
+        historyList.innerHTML = '<div class="text-gray-500 text-center py-2 text-sm">No calculations yet</div>';
+        return;
+      }
+
+      historyList.innerHTML = '';
+      calculationsHistory.forEach(item => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'p-2 text-sm border-b last:border-0 hover:bg-gray-50';
+        historyItem.innerHTML = `
+          <div class="text-gray-500">${item.calculation}</div>
+          <div class="text-right font-medium">${item.result}</div>
+        `;
+        historyItem.addEventListener('click', () => {
+          currentInput = item.result;
+          updateDisplay();
+        });
+        historyList.appendChild(historyItem);
+      });
+    }
+
+    // Handle number key presses
+    function inputDigit(digit) {
+      if (waitingForOperand) {
+        currentInput = digit;
+        waitingForOperand = false;
+      } else {
+        currentInput = currentInput === '0' ? digit : currentInput + digit;
+      }
+      updateDisplay();
+    }
+
+    // Handle decimal point
+    function inputDecimal() {
+      if (waitingForOperand) {
+        currentInput = '0.';
+        waitingForOperand = false;
+        decimalAdded = true;
+        updateDisplay();
+        return;
+      }
+
+      if (!decimalAdded) {
+        currentInput += '.';
+        decimalAdded = true;
+        updateDisplay();
+      }
+    }
+
+    // Handle operation keys
+    function handleOperation(operator) {
+      const value = parseFloat(currentInput);
+      
+      if (waitingForOperand && currentCalculation.endsWith(')')) {
+        currentCalculation = `${currentCalculation} ${getOperatorSymbol(operator)} `;
+      } else if (waitingForOperand) {
+        // Replace the last operator if another is pressed immediately after
+        currentCalculation = currentCalculation.slice(0, -3) + ` ${getOperatorSymbol(operator)} `;
+      } else {
+        if (currentCalculation === '' || currentCalculation.endsWith('= ')) {
+          currentCalculation = `${value} ${getOperatorSymbol(operator)} `;
+        } else {
+          currentCalculation += `${value} ${getOperatorSymbol(operator)} `;
+        }
+        try {
+          const expressionToEvaluate = currentCalculation.replace(/×/g, '*')
+                                                       .replace(/÷/g, '/')
+                                                       .replace(/−/g, '-')
+                                                       .trim();
+          const result = eval(expressionToEvaluate.slice(0, -2));
+          currentInput = String(result);
+          lastResult = currentInput;
+        } catch (e) {
+          console.error("Evaluation error", e);
+        }
+        waitingForOperand = true;
+        decimalAdded = false;
+      }
+      
+      updateDisplay();
+      updateHistory();
+    }
+
+    // Helper to get the display symbol for an operator
+    function getOperatorSymbol(operator) {
+      switch (operator) {
+        case '/': return '÷';
+        case '*': return '×';
+        case '-': return '−';
+        default: return operator;
+      }
+    }
+
+    // Handle equals key
+    function handleEqual() {
+      if (currentCalculation === '') return;
+      
+      let calculation = currentCalculation;
+      
+      if (!waitingForOperand) {
+        calculation += currentInput;
+      } else if (currentCalculation.endsWith('= ')) {
+        return;
+      }
+      
+      try {
+        const expressionToEvaluate = calculation.replace(/×/g, '*')
+                                               .replace(/÷/g, '/')
+                                               .replace(/−/g, '-');
+        const result = eval(expressionToEvaluate);
+        
+        if (isNaN(result) || !isFinite(result)) {
+          display.value = 'Error';
+          currentCalculation = '';
+          waitingForOperand = true;
+          return;
+        }
+        
+        // Add to history
+        addToHistory(calculation, result);
+        
+        // Update display
+        currentInput = String(result);
+        lastResult = currentInput;
+        currentCalculation = calculation + ' = ';
+        waitingForOperand = true;
+        decimalAdded = currentInput.includes('.');
+        
+        updateDisplay();
+        updateHistory();
+      } catch (e) {
+        display.value = 'Error';
+        console.error("Calculation error", e);
+      }
+    }
+
+    // Handle clear key
+    function handleClear() {
+      currentInput = '0';
+      currentCalculation = '';
+      waitingForOperand = false;
+      decimalAdded = false;
+      updateDisplay();
+      updateHistory();
+    }
+
+    // Handle backspace key
+    function handleBackspace() {
+      if (waitingForOperand) return;
+      
+      currentInput = currentInput.length > 1 
+        ? currentInput.slice(0, -1) 
+        : '0';
+      
+      if (currentInput.indexOf('.') === -1) {
+        decimalAdded = false;
+      }
+      
+      updateDisplay();
+    }
+
+    // Handle change sign
+    function changeSign() {
+      if (currentInput !== '0') {
+        currentInput = currentInput.startsWith('-') 
+          ? currentInput.slice(1) 
+          : '-' + currentInput;
+        updateDisplay();
+      }
+    }
+
+    // Handle percentage
+    function handlePercentage() {
+      const value = parseFloat(currentInput);
+      currentInput = String(value / 100);
+      updateDisplay();
+    }
+
+    // Memory functions
+    function handleMemoryClear() {
+      memoryValue = 0;
+      memoryIndicator.textContent = '';
+    }
+
+    function handleMemoryRecall() {
+      currentInput = String(memoryValue);
+      waitingForOperand = false;
+      updateDisplay();
+    }
+
+    function handleMemoryAdd() {
+      memoryValue += parseFloat(currentInput);
+      memoryIndicator.textContent = 'M';
+      waitingForOperand = true;
+    }
+
+    function handleMemorySubtract() {
+      memoryValue -= parseFloat(currentInput);
+      memoryIndicator.textContent = 'M';
+      waitingForOperand = true;
+    }
+
+    // Scientific calculator functions
+    function handleSquareRoot() {
+      const value = parseFloat(currentInput);
+      if (value < 0) {
+        display.value = 'Error';
+        return;
+      }
+      currentInput = String(Math.sqrt(value));
+      waitingForOperand = true;
+      updateDisplay();
+      addToHistory(`√(${value})`, currentInput);
+    }
+
+    function handleSquare() {
+      const value = parseFloat(currentInput);
+      currentInput = String(value * value);
+      waitingForOperand = true;
+      updateDisplay();
+      addToHistory(`(${value})²`, currentInput);
+    }
+
+    function handlePower() {
+      currentCalculation += `${currentInput} ^ `;
+      waitingForOperand = true;
+      updateHistory();
+    }
+
+    function handleTrigFunction(func) {
+      const value = parseFloat(currentInput);
+      let result;
+      
+      switch (func) {
+        case 'sin':
+          result = Math.sin(value);
+          break;
+        case 'cos':
+          result = Math.cos(value);
+          break;
+        case 'tan':
+          result = Math.tan(value);
+          break;
+        case 'log':
+          if (value <= 0) {
+            display.value = 'Error';
+            return;
+          }
+          result = Math.log10(value);
+          break;
+        case 'ln':
+          if (value <= 0) {
+            display.value = 'Error';
+            return;
+          }
+          result = Math.log(value);
+          break;
+      }
+      
+      currentInput = String(result);
+      waitingForOperand = true;
+      updateDisplay();
+      addToHistory(`${func}(${value})`, currentInput);
+    }
+
+    function handleConstant(constant) {
+      const value = constants[constant];
+      currentInput = String(value);
+      updateDisplay();
+      waitingForOperand = false;
+    }
+
+    function handleParenthesis(parenthesis) {
+      if (parenthesis === '(') {
+        if (waitingForOperand) {
+          currentCalculation += '(';
+        } else {
+          currentCalculation += `${currentInput} * (`;
+          waitingForOperand = true;
+        }
+      } else if (parenthesis === ')') {
+        if (!waitingForOperand) {
+          currentCalculation += currentInput + ')';
+          waitingForOperand = true;
+        } else if (!currentCalculation.endsWith('(')) {
+          currentCalculation += ')';
+        }
+      }
+      updateHistory();
+    }
+
+    // Switch between calculator modes
+    basicModeBtn.addEventListener('click', () => {
+      basicCalculator.classList.remove('hidden');
+      scientificCalculator.classList.add('hidden');
+      basicModeBtn.classList.add('bg-primary', 'text-white');
+      basicModeBtn.classList.remove('text-gray-700');
+      scientificModeBtn.classList.remove('bg-primary', 'text-white');
+      scientificModeBtn.classList.add('text-gray-700');
+    });
+
+    scientificModeBtn.addEventListener('click', () => {
+      scientificCalculator.classList.remove('hidden');
+      basicCalculator.classList.add('hidden');
+      scientificModeBtn.classList.add('bg-primary', 'text-white');
+      scientificModeBtn.classList.remove('text-gray-700');
+      basicModeBtn.classList.remove('bg-primary', 'text-white');
+      basicModeBtn.classList.add('text-gray-700');
+    });
+
+    // Add event listeners to calculator keys
+    calculatorKeys.forEach(key => {
+      key.addEventListener('click', () => {
+        const keyValue = key.getAttribute('data-key');
+        
+        // Handle number keys
+        if (!isNaN(parseInt(keyValue)) || keyValue === '0') {
+          inputDigit(keyValue);
+        }
+        
+        // Handle other keys
+        switch(keyValue) {
+          case '.':
+            inputDecimal();
+            break;
+          case '+':
+          case '-':
+          case '*':
+          case '/':
+          case '%':
+            handleOperation(keyValue);
+            break;
+          case '=':
+            handleEqual();
+            break;
+          case 'clear':
+            handleClear();
+            break;
+          case 'backspace':
+            handleBackspace();
+            break;
+          case 'changeSign':
+            changeSign();
+            break;
+          case 'mc':
+            handleMemoryClear();
+            break;
+          case 'mr':
+            handleMemoryRecall();
+            break;
+          case 'mPlus':
+            handleMemoryAdd();
+            break;
+          case 'mMinus':
+            handleMemorySubtract();
+            break;
+          case 'sqrt':
+            handleSquareRoot();
+            break;
+          case 'pow2':
+            handleSquare();
+            break;
+          case 'pow':
+            handlePower();
+            break;
+          case 'sin':
+          case 'cos':
+          case 'tan':
+          case 'log':
+          case 'ln':
+            handleTrigFunction(keyValue);
+            break;
+          case 'pi':
+            handleConstant('pi');
+            break;
+          case '(':
+          case ')':
+            handleParenthesis(keyValue);
+            break;
+        }
+      });
+    });
+
+    // Add event listeners to constant buttons
+    constantButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const constant = button.getAttribute('data-constant');
+        handleConstant(constant);
+      });
+    });
+
+    // Handle keyboard input
+    document.addEventListener('keydown', (event) => {
+      const key = event.key;
+      
+      // Prevent page scrolling with space key
+      if (key === ' ') {
+        event.preventDefault();
+      }
+      
+      // Handle numeric keys
+      if (!isNaN(parseInt(key)) || key === '0') {
+        inputDigit(key);
+      }
+      
+      // Handle other keys
+      switch(key) {
+        case '.':
+          inputDecimal();
+          break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+          handleOperation(key);
+          break;
+        case '=':
+        case 'Enter':
+          handleEqual();
+          break;
+        case 'Escape':
+        case 'Delete':
+          handleClear();
+          break;
+        case 'Backspace':
+          handleBackspace();
+          break;
+        case '(':
+        case ')':
+          handleParenthesis(key);
+          break;
+      }
+    });
+
+    // Initialize
+    updateDisplay();
+    renderHistory();
+  </script>
+</body>
+</html>
