@@ -1,13 +1,14 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": { "distDir": "dist" }
-      }
-    ],
-    "routes": [
-      { "src": "/(.*)", "dest": "/$1" }
-    ]
-  }
+  "version": 2,
+  "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' [https://cdn.tailwindcss.com](https://cdn.tailwindcss.com); style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+      },
+      "continue": true
+    },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/homepage.html" }
+  ]
+}
