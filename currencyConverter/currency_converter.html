@@ -6,8 +6,11 @@
   <title>Currency Converter</title>
   <!-- Include TailwindCSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Include our shared CSS -->
+  <link rel="stylesheet" href="../assets/css/main.css">
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -25,31 +28,45 @@
       background-size: cover;
       margin-right: 8px;
     }
+    
+    .rate-card {
+      transition: all 0.2s ease;
+    }
+    
+    .rate-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+    
+    .dark .rate-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.18);
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen py-8">
-  <div class="container mx-auto px-4 max-w-xl">
+<body class="theme-currency-converter">
+  <div class="container mx-auto py-6 px-4 max-w-xl">
     <!-- Header -->
-    <div class="mb-6">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">Currency Converter</h1>
-          <p class="text-gray-600">Convert between different world currencies</p>
-        </div>
-        <a href="../dashboard/index.html" class="mt-4 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-amber-600 transition">
-          Back to Dashboard
-        </a>
+    <div class="tool-header">
+      <div>
+        <h1 class="tool-title">Currency Converter</h1>
+        <p class="tool-description">Convert between different world currencies</p>
       </div>
+      <a href="../dashboard/dashboard.html" class="back-button bg-amber-500 hover:bg-amber-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Dashboard
+      </a>
     </div>
 
     <!-- Main Converter Card -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="card">
       <!-- From Currency Section -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2" for="amount">I want to convert</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="amount">I want to convert</label>
         <div class="flex items-center">
-          <input type="number" id="amount" class="flex-grow px-4 py-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" value="1" min="0.01" step="0.01" required>
-          <select id="fromCurrency" class="py-3 px-4 bg-gray-50 border border-l-0 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+          <input type="number" id="amount" class="flex-grow input rounded-r-none" value="1" min="0.01" step="0.01" required>
+          <select id="fromCurrency" class="py-3 px-4 bg-gray-50 dark:bg-gray-700 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent">
             <option value="USD">USD - US Dollar</option>
             <option value="EUR">EUR - Euro</option>
             <option value="GBP">GBP - British Pound</option>
@@ -68,7 +85,7 @@
       
       <!-- Swap Button -->
       <div class="flex justify-center my-4">
-        <button id="swapButton" class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-3 rounded-full transition-colors">
+        <button id="swapButton" class="p-3 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
           </svg>
@@ -77,8 +94,8 @@
       
       <!-- To Currency Section -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-2" for="toCurrency">To</label>
-        <select id="toCurrency" class="w-full py-3 px-4 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="toCurrency">To</label>
+        <select id="toCurrency" class="input">
           <option value="EUR" selected>EUR - Euro</option>
           <option value="USD">USD - US Dollar</option>
           <option value="GBP">GBP - British Pound</option>
@@ -96,7 +113,7 @@
       
       <!-- Convert Button -->
       <div class="mb-6">
-        <button id="convertButton" class="w-full py-3 bg-primary text-white rounded-lg hover:bg-amber-600 transition flex items-center justify-center">
+        <button id="convertButton" class="btn btn-primary w-full py-3 bg-amber-500 hover:bg-amber-600 flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
@@ -105,24 +122,24 @@
       </div>
       
       <!-- Result Display -->
-      <div class="p-5 bg-gray-50 rounded-lg border text-center">
-        <div id="result" class="text-2xl font-semibold text-gray-800">
+      <div class="p-5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
+        <div id="result" class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
           1.00 USD = 0.93 EUR
         </div>
-        <div id="rate" class="text-sm text-gray-500 mt-2">
+        <div id="rate" class="text-sm text-gray-500 dark:text-gray-400 mt-2">
           1 USD = 0.93 EUR
         </div>
       </div>
       
       <!-- Last Updated -->
-      <div class="mt-4 text-right text-xs text-gray-500">
+      <div class="mt-4 text-right text-xs text-gray-500 dark:text-gray-400">
         <span id="lastUpdated">Using exchange rates as of March 31, 2023</span>
       </div>
     </div>
     
     <!-- Exchange Rate Table -->
-    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-lg font-semibold text-gray-800 mb-4">Popular Exchange Rates</h2>
+    <div class="card mt-8">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Popular Exchange Rates</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div id="popularRates1" class="space-y-2"></div>
         <div id="popularRates2" class="space-y-2"></div>
@@ -130,21 +147,32 @@
     </div>
     
     <!-- Currency Information -->
-    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-lg font-semibold text-gray-800 mb-4">About Currency Conversion</h2>
-      <p class="text-gray-600 mb-4">
+    <div class="card mt-8">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">About Currency Conversion</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-4">
         Currency exchange rates are constantly fluctuating due to factors like economic indicators, interest rates, geopolitical events, and market sentiment. 
         This tool provides approximate conversion values using fixed exchange rates for demonstration purposes.
       </p>
-      <p class="text-gray-600 mb-2">
+      <p class="text-gray-600 dark:text-gray-400 mb-2">
         <span class="font-medium">Please note:</span> For financial transactions, always check the current market rates from official financial institutions.
       </p>
-      <div class="text-xs text-gray-500 italic">
+      <div class="text-xs text-gray-500 dark:text-gray-500 italic">
         This tool is for educational purposes only and may not reflect real-time exchange rates.
+      </div>
+    </div>
+    
+    <!-- Currency Insights Card -->
+    <div class="card mt-8">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Currency Insights</h2>
+      <div id="currencyInsights" class="divide-y divide-gray-200 dark:divide-gray-700">
+        <!-- Will be populated by JavaScript -->
       </div>
     </div>
   </div>
 
+  <!-- Include shared JavaScript files -->
+  <script src="../assets/js/utils.js"></script>
+  
   <script>
     // Fixed exchange rates (as of a specific date for demonstration purposes)
     // In a production app, you would use an API to get real-time rates
@@ -213,34 +241,90 @@
 
     // Currency descriptions to display in information section
     const currencyInfo = {
-      "USD": "The United States dollar is the official currency of the United States and several other countries.",
-      "EUR": "The euro is the official currency of 19 of the 27 member states of the European Union.",
-      "GBP": "The pound sterling is the official currency of the United Kingdom and several crown dependencies.",
-      "JPY": "The Japanese yen is the official currency of Japan.",
-      "CAD": "The Canadian dollar is the official currency of Canada.",
-      "AUD": "The Australian dollar is the official currency of Australia and several Pacific Island states.",
-      "CHF": "The Swiss franc is the official currency of Switzerland and Liechtenstein.",
-      "CNY": "The Chinese yuan is the official currency of the People's Republic of China.",
-      "INR": "The Indian rupee is the official currency of India.",
-      "MXN": "The Mexican peso is the official currency of Mexico.",
-      "BRL": "The Brazilian real is the official currency of Brazil.",
-      "KRW": "The South Korean won is the official currency of South Korea."
-    };
-
-    // Flag images for each currency
-    const currencyFlags = {
-      "USD": "🇺🇸",
-      "EUR": "🇪🇺",
-      "GBP": "🇬🇧",
-      "JPY": "🇯🇵",
-      "CAD": "🇨🇦",
-      "AUD": "🇦🇺",
-      "CHF": "🇨🇭",
-      "CNY": "🇨🇳",
-      "INR": "🇮🇳",
-      "MXN": "🇲🇽",
-      "BRL": "🇧🇷",
-      "KRW": "🇰🇷"
+      "USD": {
+        name: "US Dollar",
+        symbol: "$",
+        flag: "🇺🇸",
+        description: "The official currency of the United States and several other countries.",
+        strength: "World's primary reserve currency"
+      },
+      "EUR": {
+        name: "Euro",
+        symbol: "€",
+        flag: "🇪🇺",
+        description: "The official currency of 19 of the 27 member states of the European Union.",
+        strength: "Second most traded currency in the world"
+      },
+      "GBP": {
+        name: "British Pound",
+        symbol: "£",
+        flag: "🇬🇧",
+        description: "The official currency of the United Kingdom and several crown dependencies.",
+        strength: "Oldest currency still in use today"
+      },
+      "JPY": {
+        name: "Japanese Yen",
+        symbol: "¥",
+        flag: "🇯🇵",
+        description: "The official currency of Japan.",
+        strength: "Third most traded currency"
+      },
+      "CAD": {
+        name: "Canadian Dollar",
+        symbol: "C$",
+        flag: "🇨🇦",
+        description: "The official currency of Canada.",
+        strength: "Major commodity currency"
+      },
+      "AUD": {
+        name: "Australian Dollar",
+        symbol: "A$",
+        flag: "🇦🇺",
+        description: "The official currency of Australia and several Pacific Island states.",
+        strength: "Popular for carry trades"
+      },
+      "CHF": {
+        name: "Swiss Franc",
+        symbol: "Fr",
+        flag: "🇨🇭",
+        description: "The official currency of Switzerland and Liechtenstein.",
+        strength: "Safe-haven currency"
+      },
+      "CNY": {
+        name: "Chinese Yuan",
+        symbol: "¥",
+        flag: "🇨🇳",
+        description: "The official currency of the People's Republic of China.",
+        strength: "Increasing importance in global trade"
+      },
+      "INR": {
+        name: "Indian Rupee",
+        symbol: "₹",
+        flag: "🇮🇳",
+        description: "The official currency of India.",
+        strength: "Represents one of the world's fastest growing economies"
+      },
+      "MXN": {
+        name: "Mexican Peso",
+        symbol: "$",
+        flag: "🇲🇽",
+        description: "The official currency of Mexico.",
+        strength: "Most traded currency in Latin America"
+      },
+      "BRL": {
+        name: "Brazilian Real",
+        symbol: "R$",
+        flag: "🇧🇷",
+        description: "The official currency of Brazil.",
+        strength: "Largest economy in South America"
+      },
+      "KRW": {
+        name: "South Korean Won",
+        symbol: "₩",
+        flag: "🇰🇷",
+        description: "The official currency of South Korea.",
+        strength: "Represents a major technology-driven economy"
+      }
     };
 
     // DOM Elements
@@ -254,6 +338,7 @@
     const lastUpdatedSpan = document.getElementById("lastUpdated");
     const popularRates1 = document.getElementById("popularRates1");
     const popularRates2 = document.getElementById("popularRates2");
+    const currencyInsightsDiv = document.getElementById("currencyInsights");
 
     // Function to convert currency
     function convertCurrency() {
@@ -278,6 +363,12 @@
       
       // Update currency info display
       updateCurrencyInfo(fromCurrency, toCurrency);
+      
+      // Save to recent conversions
+      saveRecentConversion(fromCurrency, toCurrency, amount);
+      
+      // Show success message
+      domUtils.showToast('Conversion completed', 'success');
     }
     
     // Format currency values
@@ -293,9 +384,57 @@
       }) + ' ' + currency;
     }
     
+    // Save recent conversion to localStorage
+    function saveRecentConversion(from, to, amount) {
+      let recentConversions = storageUtils.loadData('recentCurrencyConversions', []);
+      
+      // Add this conversion to the front of the array
+      recentConversions.unshift({
+        from,
+        to,
+        amount,
+        date: new Date().toISOString()
+      });
+      
+      // Limit to 10 recent conversions
+      recentConversions = recentConversions.slice(0, 10);
+      
+      // Save back to localStorage
+      storageUtils.saveData('recentCurrencyConversions', recentConversions);
+    }
+    
     // Update currency information in the UI
     function updateCurrencyInfo(fromCurrency, toCurrency) {
-      // Add currency info if needed
+      currencyInsightsDiv.innerHTML = '';
+      
+      // Show info for both currencies
+      [fromCurrency, toCurrency].forEach(currency => {
+        if (!currencyInfo[currency]) return;
+        
+        const info = currencyInfo[currency];
+        
+        const insightItem = document.createElement('div');
+        insightItem.className = 'py-4 first:pt-0 last:pb-0';
+        
+        insightItem.innerHTML = `
+          <div class="flex items-center mb-2">
+            <span class="text-2xl mr-2">${info.flag}</span>
+            <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">${info.name} (${currency})</h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div>
+              <p class="text-gray-600 dark:text-gray-400">${info.description}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Symbol: ${info.symbol}</p>
+            </div>
+            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3">
+              <p class="text-sm font-medium text-amber-800 dark:text-amber-300">Key Characteristic</p>
+              <p class="text-sm text-amber-700 dark:text-amber-400">${info.strength}</p>
+            </div>
+          </div>
+        `;
+        
+        currencyInsightsDiv.appendChild(insightItem);
+      });
     }
     
     // Swap currencies function
@@ -322,10 +461,10 @@
           const rate = exchangeRates[baseCurrency][counterCurrency];
           
           const rateItem = document.createElement('div');
-          rateItem.className = 'flex items-center justify-between p-2 border-b border-gray-200';
+          rateItem.className = 'rate-card flex items-center justify-between p-2 border border-gray-200 dark:border-gray-700 rounded';
           
-          const fromFlag = currencyFlags[baseCurrency] || '';
-          const toFlag = currencyFlags[counterCurrency] || '';
+          const fromFlag = currencyInfo[baseCurrency]?.flag || '';
+          const toFlag = currencyInfo[counterCurrency]?.flag || '';
           
           rateItem.innerHTML = `
             <div class="flex items-center">
@@ -344,25 +483,63 @@
     }
 
     // Add event listeners
-    convertButton.addEventListener("click", convertCurrency);
-    swapButton.addEventListener("click", swapCurrencies);
-    
-    // Also convert when inputs change
-    amountInput.addEventListener("input", convertCurrency);
-    fromCurrencySelect.addEventListener("change", convertCurrency);
-    toCurrencySelect.addEventListener("change", convertCurrency);
+    function setupEventListeners() {
+      convertButton.addEventListener("click", convertCurrency);
+      swapButton.addEventListener("click", swapCurrencies);
+      
+      // Also convert when inputs change
+      amountInput.addEventListener("input", convertCurrency);
+      fromCurrencySelect.addEventListener("change", convertCurrency);
+      toCurrencySelect.addEventListener("change", convertCurrency);
+      
+      // Add keyboard shortcut for conversion (Enter)
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && (document.activeElement === amountInput || 
+                                  document.activeElement === fromCurrencySelect || 
+                                  document.activeElement === toCurrencySelect)) {
+          convertCurrency();
+        }
+      });
+      
+      // Make rate cards clickable to set currencies
+      document.querySelectorAll('.rate-card').forEach(card => {
+        card.addEventListener('click', () => {
+          // Parse currencies from the card
+          const fromCurrency = card.querySelector('.flex:first-child span:last-child').textContent.trim().split(' ')[1];
+          const toCurrency = card.querySelector('.flex:last-child span:last-child').textContent.trim().split(' ')[1];
+          
+          // Set the selects
+          fromCurrencySelect.value = fromCurrency;
+          toCurrencySelect.value = toCurrency;
+          
+          // Convert
+          convertCurrency();
+        });
+      });
+    }
     
     // Set current date in the last updated text
     function setLastUpdatedDate() {
       const now = new Date();
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      lastUpdatedSpan.textContent = `Using exchange rates as of ${now.toLocaleDateString('en-US', options)}`;
+      lastUpdatedSpan.textContent = `Using exchange rates as of ${dateUtils.formatDate(now)}`;
     }
     
     // Initialize
-    setLastUpdatedDate();
-    displayPopularRates();
-    convertCurrency();
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize theme
+      themeUtils.initTheme();
+      
+      setLastUpdatedDate();
+      displayPopularRates();
+      setupEventListeners();
+      convertCurrency(); // Initial conversion
+      
+      // Add meta data for the page
+      document.querySelector('head').insertAdjacentHTML('beforeend', `
+        <meta name="description" content="Convert between world currencies with our simple and easy-to-use currency converter tool">
+        <meta name="keywords" content="currency converter, exchange rates, forex, USD, EUR, GBP, JPY">
+      `);
+    });
   </script>
 </body>
 </html>

@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JSON Formatter</title>
   <!-- Include TailwindCSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Include Prism.js for syntax highlighting -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-json.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-yaml.min.js"></script>
-  <!-- Include js-yaml for YAML conversion -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <!-- Include our shared CSS -->
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <!-- Include Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/loader.min.js"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -25,568 +23,355 @@
     }
   </script>
   <style>
-    .CodeMirror {
-      height: 100%;
-      font-size: 14px;
+    .editor-container {
+      height: 500px;
+      border: 1px solid #e5e7eb;
       border-radius: 0.375rem;
     }
-    .json-tree {
-      margin: 0;
-      background: transparent;
-      font-size: 14px;
+    
+    .dark .editor-container {
+      border-color: #374151;
     }
-    .json-tree .json-tree-value {
-      margin-left: 2em;
-    }
-    .json-tree .json-tree-key {
-      color: #ec4899;
-      font-weight: bold;
-      padding-right: 0.5em;
-    }
-    .json-tree .json-tree-string {
-      color: #10b981;
-    }
-    .json-tree .json-tree-number {
-      color: #3b82f6;
-    }
-    .json-tree .json-tree-boolean {
-      color: #8b5cf6;
-    }
-    .json-tree .json-tree-null {
-      color: #6b7280;
-    }
-    .json-tree button.json-tree-toggle {
-      color: #6b7280;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-size: 0.85em;
-      padding: 0 0.5em;
-    }
-    .json-tree li {
-      position: relative;
-      list-style: none;
-      margin: 0;
-      padding: 0 0 0 1em;
-      line-height: 1.5em;
+    
+    .copied-message {
+      animation: fadeOut 2s ease-in-out;
     }
   </style>
 </head>
-<body class="bg-gray-100">
-  <div class="container mx-auto py-6 px-4 max-w-6xl min-h-screen flex flex-col">
+<body class="theme-json-formatter">
+  <div class="container max-w-6xl mx-auto py-8 px-4">
     <!-- Header -->
-    <div class="mb-6">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">JSON Formatter</h1>
-          <p class="text-gray-600">Format, validate, and transform JSON data</p>
-        </div>
-        <a href="../dashboard/index.html" class="mt-4 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-pink-600 transition">
-          Back to Dashboard
-        </a>
+    <div class="tool-header">
+      <div>
+        <h1 class="tool-title">JSON Formatter</h1>
+        <p class="tool-description">Format, validate, and transform JSON data</p>
       </div>
+      <a href="../dashboard/dashboard.html" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Dashboard
+      </a>
     </div>
 
     <!-- Main Content -->
-    <div class="flex-grow flex flex-col md:flex-row gap-6">
-      <!-- Input Panel -->
-      <div class="flex-1 flex flex-col">
-        <div class="bg-white rounded-lg shadow p-4 mb-4 flex justify-between items-center">
-          <h2 class="text-lg font-bold">Input</h2>
-          <div class="flex">
-            <button id="formatBtn" class="px-3 py-1 bg-primary text-white rounded hover:bg-pink-600 transition mr-2">
-              Format
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left Column: Input and Controls -->
+      <div class="lg:col-span-2">
+        <div class="card">
+          <h2 class="text-xl font-bold mb-4">Input JSON</h2>
+          
+          <!-- JSON Input Editor -->
+          <div id="jsonInputContainer" class="editor-container mb-4"></div>
+          
+          <!-- Input Controls -->
+          <div class="flex flex-wrap gap-3">
+            <button id="formatBtn" class="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0h8v12H6V4z" clip-rule="evenodd" />
+              </svg>
+              Format JSON
             </button>
-            <button id="minifyBtn" class="px-3 py-1 border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition mr-2">
+            
+            <button id="minifyBtn" class="btn btn-outline">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+              </svg>
               Minify
             </button>
-            <div class="dropdown relative inline-block">
-              <button class="px-3 py-1 border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition">
-                More ▼
-              </button>
-              <div class="dropdown-menu hidden absolute right-0 mt-1 bg-white rounded shadow-lg z-10 w-36">
-                <button id="toYamlBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Convert to YAML</button>
-                <button id="fromYamlBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Convert from YAML</button>
-                <button id="clearBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Clear</button>
-                <button id="loadSampleBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 transition">Load Sample</button>
-              </div>
-            </div>
+            
+            <button id="validateBtn" class="btn btn-outline">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              Validate
+            </button>
+            
+            <button id="clearBtn" class="btn btn-outline">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              Clear
+            </button>
           </div>
-        </div>
-        <div class="flex-grow relative">
-          <textarea id="jsonInput" class="w-full h-full p-4 font-mono text-sm border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-primary" 
-                    placeholder="Paste your JSON here..."></textarea>
-          <div id="errorDisplay" class="hidden absolute bottom-4 left-4 right-4 p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
         </div>
       </div>
       
-      <!-- Output Panel -->
-      <div class="flex-1 flex flex-col">
-        <div class="bg-white rounded-lg shadow p-4 mb-4 flex justify-between items-center">
-          <div class="flex">
-            <button id="formatViewBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-l hover:bg-gray-300 transition">
-              Formatted
-            </button>
-            <button id="treeViewBtn" class="px-3 py-1 text-gray-700 rounded-r hover:bg-gray-200 transition">
-              Tree View
-            </button>
+      <!-- Right Column: Stats and Tools -->
+      <div class="lg:col-span-1">
+        <div class="card mb-6">
+          <h2 class="text-xl font-bold mb-4">JSON Stats</h2>
+          
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-sm font-medium">Size:</span>
+              <span id="jsonSize" class="text-sm">0 bytes</span>
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-sm font-medium">Objects:</span>
+              <span id="jsonObjects" class="text-sm">0</span>
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-sm font-medium">Arrays:</span>
+              <span id="jsonArrays" class="text-sm">0</span>
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-sm font-medium">Properties:</span>
+              <span id="jsonProperties" class="text-sm">0</span>
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-sm font-medium">Validity:</span>
+              <span id="jsonValidity" class="text-sm">N/A</span>
+            </div>
           </div>
-          <div class="flex items-center">
-            <label for="indentSize" class="text-sm text-gray-600 mr-2">Indent:</label>
-            <input type="range" id="indentSize" min="1" max="8" value="2" class="w-16 mr-2">
-            <span id="indentSizeValue" class="text-sm text-gray-600 mr-4">2 spaces</span>
-            <button id="copyBtn" class="p-1 text-gray-500 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+        </div>
+        
+        <div class="card">
+          <h2 class="text-xl font-bold mb-4">Tools</h2>
+          
+          <div class="space-y-3">
+            <button id="copyBtn" class="btn btn-outline w-full text-left flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
+                <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z" />
               </svg>
+              Copy to clipboard
+            </button>
+            
+            <button id="downloadBtn" class="btn btn-outline w-full text-left flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              Download as .json
+            </button>
+            
+            <button id="loadSampleBtn" class="btn btn-outline w-full text-left flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+              </svg>
+              Load sample JSON
             </button>
           </div>
-        </div>
-        <div class="flex-grow bg-gray-800 rounded-lg shadow overflow-hidden">
-          <div id="formatView" class="h-full overflow-auto">
-            <pre class="h-full m-0 p-4"><code id="jsonOutput" class="language-json"></code></pre>
-          </div>
-          <div id="treeView" class="hidden h-full overflow-auto bg-white p-4">
-            <ul id="jsonTree" class="json-tree"></ul>
-          </div>
-        </div>
-        <div class="mt-2 flex justify-between text-xs text-gray-500">
-          <span id="charactersCount">Characters: 0</span>
-          <span id="objectsCount">Objects: 0</span>
-          <span id="arraysCount">Arrays: 0</span>
         </div>
       </div>
     </div>
   </div>
-
+  
+  <!-- Include shared JavaScript files -->
+  <script src="../assets/js/utils.js"></script>
+  
   <script>
-    // DOM Elements
-    const jsonInput = document.getElementById('jsonInput');
-    const jsonOutput = document.getElementById('jsonOutput');
-    const jsonTree = document.getElementById('jsonTree');
-    const errorDisplay = document.getElementById('errorDisplay');
-    const formatBtn = document.getElementById('formatBtn');
-    const minifyBtn = document.getElementById('minifyBtn');
-    const toYamlBtn = document.getElementById('toYamlBtn');
-    const fromYamlBtn = document.getElementById('fromYamlBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const loadSampleBtn = document.getElementById('loadSampleBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const formatViewBtn = document.getElementById('formatViewBtn');
-    const treeViewBtn = document.getElementById('treeViewBtn');
-    const formatView = document.getElementById('formatView');
-    const treeView = document.getElementById('treeView');
-    const indentSize = document.getElementById('indentSize');
-    const indentSizeValue = document.getElementById('indentSizeValue');
-    const charactersCount = document.getElementById('charactersCount');
-    const objectsCount = document.getElementById('objectsCount');
-    const arraysCount = document.getElementById('arraysCount');
+    let jsonEditor;
+    const sampleJson = {
+      "name": "JSON Formatter Tool",
+      "version": "1.0.0",
+      "description": "A tool to format and validate JSON data",
+      "features": [
+        "Format JSON",
+        "Minify JSON",
+        "Validate JSON",
+        "Copy to clipboard",
+        "Download as file"
+      ],
+      "stats": {
+        "objects": 2,
+        "arrays": 1,
+        "properties": 5
+      },
+      "active": true
+    };
 
-    // Sample data for the "Load Sample" button
-    const sampleJson = `{
-  "name": "Project Developer Tools",
-  "version": "1.0.0",
-  "description": "A collection of developer tools",
-  "tools": [
-    {
-      "id": 1,
-      "name": "JSON Formatter",
-      "path": "/json-formatter",
-      "tags": ["formatter", "developer"]
-    },
-    {
-      "id": 2,
-      "name": "Password Generator",
-      "path": "/password-generator",
-      "tags": ["generator", "security"]
-    },
-    {
-      "id": 3,
-      "name": "Base64 Encoder/Decoder",
-      "path": "/base64-tool",
-      "tags": ["encoder", "decoder", "utility"]
-    }
-  ],
-  "settings": {
-    "theme": "dark",
-    "language": "en",
-    "notifications": true
-  },
-  "stats": {
-    "users": 1000,
-    "tools": 8,
-    "activeUsers": 750
-  }
-}`;
-
-    // Initialize
-    indentSizeValue.textContent = `${indentSize.value} spaces`;
-
-    // Dropdown toggle
-    document.querySelector('.dropdown button').addEventListener('click', function() {
-      document.querySelector('.dropdown-menu').classList.toggle('hidden');
+    // Initialize Monaco Editor
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
+      // Initialize editor with default settings
+      jsonEditor = monaco.editor.create(document.getElementById('jsonInputContainer'), {
+        value: '{\n  "key": "value"\n}',
+        language: 'json',
+        theme: themeUtils.getPreferredTheme() === 'dark' ? 'vs-dark' : 'vs',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        lineNumbers: 'on',
+        tabSize: 2,
+      });
+      
+      // Add theme change listener
+      themeUtils.onThemeChange((theme) => {
+        monaco.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs');
+      });
+      
+      // Add editor content change listener
+      jsonEditor.onDidChangeModelContent(() => updateJsonStats());
+      
+      // Initialize
+      updateJsonStats();
     });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-      if (!event.target.closest('.dropdown')) {
-        document.querySelector('.dropdown-menu').classList.add('hidden');
-      }
-    });
-
-    // Functions
-    function parseAndValidateJson(text) {
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        throw new Error(`Invalid JSON: ${e.message}`);
-      }
-    }
-
-    function formatJson() {
-      try {
-        hideError();
-        const inputText = jsonInput.value.trim();
-        
-        if (!inputText) {
-          jsonOutput.textContent = '';
-          jsonTree.innerHTML = '';
-          updateStats('');
-          return;
-        }
-        
-        const parsedJson = parseAndValidateJson(inputText);
-        const formattedText = JSON.stringify(parsedJson, null, parseInt(indentSize.value));
-        
-        jsonOutput.textContent = formattedText;
-        Prism.highlightElement(jsonOutput);
-        
-        createTreeView(parsedJson);
-        updateStats(formattedText);
-      } catch (e) {
-        showError(e.message);
-      }
-    }
-
-    function minifyJson() {
-      try {
-        hideError();
-        const inputText = jsonInput.value.trim();
-        
-        if (!inputText) {
-          jsonOutput.textContent = '';
-          jsonTree.innerHTML = '';
-          updateStats('');
-          return;
-        }
-        
-        const parsedJson = parseAndValidateJson(inputText);
-        const minifiedText = JSON.stringify(parsedJson);
-        
-        jsonOutput.textContent = minifiedText;
-        Prism.highlightElement(jsonOutput);
-        
-        createTreeView(parsedJson);
-        updateStats(minifiedText);
-      } catch (e) {
-        showError(e.message);
-      }
-    }
-
-    function convertToYaml() {
-      try {
-        hideError();
-        const inputText = jsonInput.value.trim();
-        
-        if (!inputText) {
-          jsonOutput.textContent = '';
-          jsonTree.innerHTML = '';
-          updateStats('');
-          return;
-        }
-        
-        const parsedJson = parseAndValidateJson(inputText);
-        const yamlText = jsyaml.dump(parsedJson);
-        
-        jsonOutput.textContent = yamlText;
-        jsonOutput.className = 'language-yaml';
-        Prism.highlightElement(jsonOutput);
-        
-        createTreeView(parsedJson);
-        updateStats(yamlText);
-      } catch (e) {
-        showError(e.message);
-      }
-    }
-
-    function convertFromYaml() {
-      try {
-        hideError();
-        const inputText = jsonInput.value.trim();
-        
-        if (!inputText) {
-          jsonOutput.textContent = '';
-          jsonTree.innerHTML = '';
-          updateStats('');
-          return;
-        }
-        
-        const parsedYaml = jsyaml.load(inputText);
-        const jsonText = JSON.stringify(parsedYaml, null, parseInt(indentSize.value));
-        
-        jsonOutput.textContent = jsonText;
-        jsonOutput.className = 'language-json';
-        Prism.highlightElement(jsonOutput);
-        
-        createTreeView(parsedYaml);
-        updateStats(jsonText);
-      } catch (e) {
-        showError(`Invalid YAML: ${e.message}`);
-      }
-    }
-
-    function showError(message) {
-      errorDisplay.textContent = message;
-      errorDisplay.classList.remove('hidden');
-    }
-
-    function hideError() {
-      errorDisplay.textContent = '';
-      errorDisplay.classList.add('hidden');
-    }
-
-    function updateStats(text) {
-      // Update character count
-      charactersCount.textContent = `Characters: ${text.length}`;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize theme
+      themeUtils.initTheme();
       
-      // Count objects and arrays
-      let objCount = 0;
-      let arrCount = 0;
-      
-      try {
-        const json = JSON.parse(jsonInput.value);
-        
-        function countObjects(obj) {
-          if (obj && typeof obj === 'object') {
-            if (Array.isArray(obj)) {
-              arrCount++;
-              obj.forEach(item => countObjects(item));
-            } else {
-              objCount++;
-              Object.values(obj).forEach(value => countObjects(value));
-            }
-          }
+      // Format JSON button
+      document.getElementById('formatBtn').addEventListener('click', () => {
+        try {
+          const currentValue = jsonEditor.getValue();
+          const jsonObject = JSON.parse(currentValue);
+          const formattedJson = JSON.stringify(jsonObject, null, 2);
+          jsonEditor.setValue(formattedJson);
+          updateJsonStats(true);
+        } catch (e) {
+          document.getElementById('jsonValidity').textContent = 'Invalid JSON';
+          document.getElementById('jsonValidity').className = 'text-sm text-red-600 dark:text-red-400 font-medium';
         }
-        
-        countObjects(json);
-      } catch (e) {
-        // Ignore errors, just don't count
-      }
+      });
       
-      objectsCount.textContent = `Objects: ${objCount}`;
-      arraysCount.textContent = `Arrays: ${arrCount}`;
-    }
-
-    function createTreeView(json) {
-      jsonTree.innerHTML = '';
+      // Minify JSON button
+      document.getElementById('minifyBtn').addEventListener('click', () => {
+        try {
+          const currentValue = jsonEditor.getValue();
+          const jsonObject = JSON.parse(currentValue);
+          const minifiedJson = JSON.stringify(jsonObject);
+          jsonEditor.setValue(minifiedJson);
+          updateJsonStats(true);
+        } catch (e) {
+          document.getElementById('jsonValidity').textContent = 'Invalid JSON';
+          document.getElementById('jsonValidity').className = 'text-sm text-red-600 dark:text-red-400 font-medium';
+        }
+      });
       
-      function buildTreeView(obj, container) {
-        if (obj === null) {
-          const nullNode = document.createElement('span');
-          nullNode.textContent = 'null';
-          nullNode.className = 'json-tree-null';
-          container.appendChild(nullNode);
-          return;
-        }
-        
-        if (typeof obj !== 'object') {
-          let valueNode = document.createElement('span');
-          
-          if (typeof obj === 'string') {
-            valueNode.textContent = `"${obj}"`;
-            valueNode.className = 'json-tree-string';
-          } else if (typeof obj === 'number') {
-            valueNode.textContent = obj;
-            valueNode.className = 'json-tree-number';
-          } else if (typeof obj === 'boolean') {
-            valueNode.textContent = obj;
-            valueNode.className = 'json-tree-boolean';
-          } else {
-            valueNode.textContent = obj;
-          }
-          
-          container.appendChild(valueNode);
-          return;
-        }
-        
-        if (Array.isArray(obj)) {
-          if (obj.length === 0) {
-            const emptyArray = document.createElement('span');
-            emptyArray.textContent = '[]';
-            container.appendChild(emptyArray);
-            return;
-          }
-          
-          const toggleBtn = document.createElement('button');
-          toggleBtn.innerHTML = '▼';
-          toggleBtn.className = 'json-tree-toggle';
-          container.appendChild(toggleBtn);
-          
-          const arrayCount = document.createElement('span');
-          arrayCount.textContent = `Array(${obj.length})`;
-          arrayCount.className = 'font-medium';
-          container.appendChild(arrayCount);
-          
-          const list = document.createElement('ul');
-          list.className = 'json-tree-value';
-          container.appendChild(list);
-          
-          obj.forEach((item, index) => {
-            const listItem = document.createElement('li');
-            const indexSpan = document.createElement('span');
-            indexSpan.textContent = `${index}: `;
-            indexSpan.className = 'json-tree-key';
-            listItem.appendChild(indexSpan);
-            
-            buildTreeView(item, listItem);
-            list.appendChild(listItem);
-          });
-          
-          toggleBtn.addEventListener('click', () => {
-            if (list.style.display === 'none') {
-              list.style.display = 'block';
-              toggleBtn.innerHTML = '▼';
-            } else {
-              list.style.display = 'none';
-              toggleBtn.innerHTML = '▶';
-            }
-          });
-        } else { // Object
-          const keys = Object.keys(obj);
-          
-          if (keys.length === 0) {
-            const emptyObject = document.createElement('span');
-            emptyObject.textContent = '{}';
-            container.appendChild(emptyObject);
-            return;
-          }
-          
-          const toggleBtn = document.createElement('button');
-          toggleBtn.innerHTML = '▼';
-          toggleBtn.className = 'json-tree-toggle';
-          container.appendChild(toggleBtn);
-          
-          const objectCount = document.createElement('span');
-          objectCount.textContent = `Object(${keys.length})`;
-          objectCount.className = 'font-medium';
-          container.appendChild(objectCount);
-          
-          const list = document.createElement('ul');
-          list.className = 'json-tree-value';
-          container.appendChild(list);
-          
-          keys.forEach(key => {
-            const listItem = document.createElement('li');
-            const keySpan = document.createElement('span');
-            keySpan.textContent = `${key}: `;
-            keySpan.className = 'json-tree-key';
-            listItem.appendChild(keySpan);
-            
-            buildTreeView(obj[key], listItem);
-            list.appendChild(listItem);
-          });
-          
-          toggleBtn.addEventListener('click', () => {
-            if (list.style.display === 'none') {
-              list.style.display = 'block';
-              toggleBtn.innerHTML = '▼';
-            } else {
-              list.style.display = 'none';
-              toggleBtn.innerHTML = '▶';
-            }
-          });
-        }
-      }
+      // Validate button
+      document.getElementById('validateBtn').addEventListener('click', () => {
+        updateJsonStats(true);
+      });
       
-      buildTreeView(json, jsonTree);
-    }
-
-    function copyToClipboard() {
-      const textToCopy = jsonOutput.textContent;
-      navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-          // Show success feedback
-          const originalHTML = copyBtn.innerHTML;
-          copyBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+      // Clear button
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        jsonEditor.setValue('');
+        updateJsonStats();
+      });
+      
+      // Copy button
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        const content = jsonEditor.getValue();
+        navigator.clipboard.writeText(content).then(() => {
+          const btn = document.getElementById('copyBtn');
+          const originalText = btn.innerHTML;
+          
+          btn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
             </svg>
+            Copied!
           `;
+          
+          btn.classList.remove('btn-outline');
+          btn.classList.add('btn-primary');
+          
           setTimeout(() => {
-            copyBtn.innerHTML = originalHTML;
-          }, 1500);
-        })
-        .catch(err => {
-          console.error('Failed to copy: ', err);
+            btn.innerHTML = originalText;
+            btn.classList.add('btn-outline');
+            btn.classList.remove('btn-primary');
+          }, 2000);
         });
-    }
-
-    // Event Listeners
-    formatBtn.addEventListener('click', formatJson);
-    minifyBtn.addEventListener('click', minifyJson);
-    toYamlBtn.addEventListener('click', convertToYaml);
-    fromYamlBtn.addEventListener('click', convertFromYaml);
-    clearBtn.addEventListener('click', () => {
-      jsonInput.value = '';
-      jsonOutput.textContent = '';
-      jsonTree.innerHTML = '';
-      hideError();
-      updateStats('');
-    });
-    
-    loadSampleBtn.addEventListener('click', () => {
-      jsonInput.value = sampleJson;
-      formatJson();
-    });
-    
-    copyBtn.addEventListener('click', copyToClipboard);
-    
-    formatViewBtn.addEventListener('click', () => {
-      formatView.classList.remove('hidden');
-      treeView.classList.add('hidden');
-      formatViewBtn.classList.add('bg-gray-200');
-      treeViewBtn.classList.remove('bg-gray-200');
-    });
-    
-    treeViewBtn.addEventListener('click', () => {
-      treeView.classList.remove('hidden');
-      formatView.classList.add('hidden');
-      treeViewBtn.classList.add('bg-gray-200');
-      formatViewBtn.classList.remove('bg-gray-200');
-    });
-    
-    indentSize.addEventListener('input', () => {
-      indentSizeValue.textContent = `${indentSize.value} spaces`;
-      if (jsonOutput.textContent) {
+      });
+      
+      // Download button
+      document.getElementById('downloadBtn').addEventListener('click', () => {
         try {
-          const json = JSON.parse(jsonInput.value);
-          jsonOutput.textContent = JSON.stringify(json, null, parseInt(indentSize.value));
-          Prism.highlightElement(jsonOutput);
+          const content = jsonEditor.getValue();
+          const blob = new Blob([content], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'formatted_json.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
         } catch (e) {
-          // Ignore errors
+          console.error('Error downloading JSON:', e);
+        }
+      });
+      
+      // Load sample button
+      document.getElementById('loadSampleBtn').addEventListener('click', () => {
+        jsonEditor.setValue(JSON.stringify(sampleJson, null, 2));
+        updateJsonStats();
+      });
+    });
+    
+    function updateJsonStats(showValidationMessage = false) {
+      const content = jsonEditor.getValue();
+      
+      // Update size
+      const bytes = new Blob([content]).size;
+      document.getElementById('jsonSize').textContent = `${bytes} bytes`;
+      
+      // Validate and parse JSON
+      let isValid = true;
+      let jsonObject = null;
+      
+      try {
+        jsonObject = JSON.parse(content);
+      } catch (e) {
+        isValid = false;
+      }
+      
+      // Update validity
+      const validityElement = document.getElementById('jsonValidity');
+      if (isValid) {
+        validityElement.textContent = 'Valid JSON';
+        validityElement.className = 'text-sm text-green-600 dark:text-green-400 font-medium';
+      } else {
+        validityElement.textContent = 'Invalid JSON';
+        validityElement.className = 'text-sm text-red-600 dark:text-red-400 font-medium';
+      }
+      
+      if (showValidationMessage && isValid) {
+        domUtils.showToast('JSON is valid!', 'success');
+      } else if (showValidationMessage && !isValid) {
+        domUtils.showToast('JSON is invalid. Please check your syntax.', 'error');
+      }
+      
+      // Count objects, arrays, and properties
+      if (isValid && jsonObject) {
+        const counts = countJsonElements(jsonObject);
+        document.getElementById('jsonObjects').textContent = counts.objects;
+        document.getElementById('jsonArrays').textContent = counts.arrays;
+        document.getElementById('jsonProperties').textContent = counts.properties;
+      } else {
+        document.getElementById('jsonObjects').textContent = '0';
+        document.getElementById('jsonArrays').textContent = '0';
+        document.getElementById('jsonProperties').textContent = '0';
+      }
+    }
+    
+    function countJsonElements(obj) {
+      let counts = { objects: 0, arrays: 0, properties: 0 };
+      
+      function traverse(item) {
+        if (item !== null && typeof item === 'object') {
+          if (Array.isArray(item)) {
+            counts.arrays++;
+            item.forEach(traverse);
+          } else {
+            counts.objects++;
+            counts.properties += Object.keys(item).length;
+            Object.values(item).forEach(traverse);
+          }
         }
       }
-    });
-    
-    // Format input on paste (with small delay to let the paste complete)
-    jsonInput.addEventListener('paste', () => {
-      setTimeout(() => {
-        formatJson();
-      }, 100);
-    });
-    
-    // Initial sample load
-    loadSampleBtn.click();
+      
+      traverse(obj);
+      return counts;
+    }
   </script>
 </body>
 </html>

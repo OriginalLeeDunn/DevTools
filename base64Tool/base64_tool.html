@@ -6,8 +6,11 @@
   <title>Base64 Tool</title>
   <!-- Include TailwindCSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Include our shared CSS -->
+  <link rel="stylesheet" href="../assets/css/main.css">
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -23,39 +26,36 @@
       background-color: rgba(6, 182, 212, 0.1);
     }
     
-    .fade-in {
-      animation: fadeIn 0.3s ease-in-out;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .dark .drag-active {
+      border-color: #22D3EE;
+      background-color: rgba(6, 182, 212, 0.05);
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="theme-base64-tool">
   <div class="container mx-auto py-6 px-4 max-w-5xl">
     <!-- Header -->
-    <div class="mb-6">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">Base64 Tool</h1>
-          <p class="text-gray-600">Encode and decode Base64 strings with support for text and files</p>
-        </div>
-        <a href="../dashboard/index.html" class="mt-4 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-cyan-600 transition">
-          Back to Dashboard
-        </a>
+    <div class="tool-header">
+      <div>
+        <h1 class="tool-title">Base64 Tool</h1>
+        <p class="tool-description">Encode and decode Base64 strings with support for text and files</p>
       </div>
+      <a href="../dashboard/dashboard.html" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Dashboard
+      </a>
     </div>
     
     <!-- Main Content -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="card">
       <!-- Tabs -->
-      <div class="mb-6 border-b">
+      <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
         <div class="flex space-x-1">
-          <button id="textTab" class="px-4 py-2 text-primary border-b-2 border-primary">Text</button>
-          <button id="fileTab" class="px-4 py-2 text-gray-500 hover:text-gray-700">File</button>
-          <button id="imageTab" class="px-4 py-2 text-gray-500 hover:text-gray-700">Image Preview</button>
+          <button id="textTab" class="px-4 py-2 text-cyan-500 border-b-2 border-cyan-500">Text</button>
+          <button id="fileTab" class="px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">File</button>
+          <button id="imageTab" class="px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Image Preview</button>
         </div>
       </div>
       
@@ -65,18 +65,18 @@
         <div id="textTabContent">
           <!-- Convert Mode Selector -->
           <div class="mb-6">
-            <div class="flex space-x-1 border rounded-lg inline-block">
-              <button id="encodeBtn" class="px-4 py-2 bg-primary text-white rounded-l-lg">Encode</button>
-              <button id="decodeBtn" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-r-lg">Decode</button>
+            <div class="flex space-x-1 border rounded-lg inline-block dark:border-gray-700">
+              <button id="encodeBtn" class="px-4 py-2 bg-cyan-500 text-white rounded-l-lg">Encode</button>
+              <button id="decodeBtn" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-r-lg">Decode</button>
             </div>
             <div class="inline-block ml-4">
               <label class="inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="urlSafeCheckbox" class="form-checkbox h-5 w-5 text-primary">
-                <span class="ml-2 text-gray-700">URL-safe encoding</span>
+                <input type="checkbox" id="urlSafeCheckbox" class="form-checkbox h-5 w-5 text-cyan-500 rounded dark:bg-gray-700">
+                <span class="ml-2 text-gray-700 dark:text-gray-300">URL-safe encoding</span>
               </label>
             </div>
             <div class="inline-block ml-4">
-              <select id="encodingSelect" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary">
+              <select id="encodingSelect" class="input w-auto px-2 py-1">
                 <option value="utf8">UTF-8</option>
                 <option value="ascii">ASCII</option>
                 <option value="iso88591">ISO-8859-1</option>
@@ -86,38 +86,38 @@
           
           <!-- Input -->
           <div class="mb-6">
-            <label for="inputText" class="block text-sm font-medium text-gray-700 mb-1">Input</label>
+            <label for="inputText" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Input</label>
             <div class="relative">
-              <textarea id="inputText" rows="6" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="Enter text to encode or Base64 to decode"></textarea>
-              <button id="clearInputBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+              <textarea id="inputText" rows="6" class="textarea" placeholder="Enter text to encode or Base64 to decode"></textarea>
+              <button id="clearInputBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                 </svg>
               </button>
             </div>
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
               <span id="inputCharCount">Characters: 0</span>
             </div>
           </div>
           
           <!-- Convert Button -->
           <div class="mb-6 text-center">
-            <button id="convertBtn" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-cyan-600 transition">Encode</button>
+            <button id="convertBtn" class="btn btn-primary px-6 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition">Encode</button>
           </div>
           
           <!-- Output -->
           <div class="mb-6">
-            <label for="outputText" class="block text-sm font-medium text-gray-700 mb-1">Output</label>
+            <label for="outputText" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Output</label>
             <div class="relative">
-              <textarea id="outputText" rows="6" class="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="Result will appear here" readonly></textarea>
-              <button id="copyBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+              <textarea id="outputText" rows="6" class="textarea bg-gray-50 dark:bg-gray-800" placeholder="Result will appear here" readonly></textarea>
+              <button id="copyBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                   <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
                 </svg>
               </button>
             </div>
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
               <span id="outputCharCount">Characters: 0</span>
               <span id="outputSizeInfo" class="hidden">Size: 0 KB</span>
             </div>
@@ -128,15 +128,15 @@
         <div id="fileTabContent" class="hidden">
           <!-- File Upload -->
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Select a file</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select a file</label>
             <div class="flex items-center justify-center w-full">
-              <label id="dropZone" class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-primary transition-colors">
+              <label id="dropZone" class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors">
                 <div class="flex flex-col items-center justify-center pt-7">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <p class="pt-1 text-sm text-gray-600">Drag & drop or <span class="text-primary">browse files</span></p>
-                  <p id="fileInfo" class="pt-1 text-xs text-gray-500">No file selected</p>
+                  <p class="pt-1 text-sm text-gray-600 dark:text-gray-400">Drag & drop or <span class="text-cyan-500">browse files</span></p>
+                  <p id="fileInfo" class="pt-1 text-xs text-gray-500 dark:text-gray-500">No file selected</p>
                 </div>
                 <input id="fileInput" type="file" class="hidden" />
               </label>
@@ -145,44 +145,44 @@
           
           <!-- Action Buttons -->
           <div class="mb-6 flex flex-wrap gap-4">
-            <button id="fileToBase64Btn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-cyan-600 transition" disabled>
+            <button id="fileToBase64Btn" class="btn btn-primary px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition" disabled>
               Convert File to Base64
             </button>
-            <button id="base64ToFileBtn" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition" disabled>
+            <button id="base64ToFileBtn" class="btn px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition" disabled>
               Convert Base64 to File
             </button>
           </div>
           
           <!-- File Base64 Output -->
           <div>
-            <label for="fileBase64Output" class="block text-sm font-medium text-gray-700 mb-1">Base64 Output</label>
+            <label for="fileBase64Output" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Base64 Output</label>
             <div class="relative">
-              <textarea id="fileBase64Output" rows="6" class="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="Base64 string will appear here" readonly></textarea>
-              <button id="copyFileBase64Btn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+              <textarea id="fileBase64Output" rows="6" class="textarea bg-gray-50 dark:bg-gray-800" placeholder="Base64 string will appear here" readonly></textarea>
+              <button id="copyFileBase64Btn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                   <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
                 </svg>
               </button>
             </div>
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
               <span id="fileOutputCharCount">Characters: 0</span>
               <span id="fileOutputSizeInfo">Size: 0 KB</span>
             </div>
           </div>
           
           <!-- Base64 to File Conversion -->
-          <div class="mt-6 border-t pt-6">
-            <label for="fileBase64Input" class="block text-sm font-medium text-gray-700 mb-1">Base64 to File</label>
+          <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <label for="fileBase64Input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Base64 to File</label>
             <div class="mb-4">
-              <textarea id="fileBase64Input" rows="4" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="Paste a Base64 string to convert to a file"></textarea>
+              <textarea id="fileBase64Input" rows="4" class="textarea" placeholder="Paste a Base64 string to convert to a file"></textarea>
             </div>
             <div class="mb-4">
-              <label for="fileNameInput" class="block text-sm font-medium text-gray-700 mb-1">File Name (with extension)</label>
-              <input type="text" id="fileNameInput" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="example.jpg">
+              <label for="fileNameInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">File Name (with extension)</label>
+              <input type="text" id="fileNameInput" class="input" placeholder="example.jpg">
             </div>
             <div class="text-center">
-              <button id="downloadFileBtn" class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
+              <button id="downloadFileBtn" class="btn px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
                 Download File
               </button>
             </div>
@@ -193,15 +193,15 @@
         <div id="imageTabContent" class="hidden">
           <!-- Instructions -->
           <div class="mb-6">
-            <p class="text-gray-600">Enter a Base64 image data string to preview it</p>
+            <p class="text-gray-600 dark:text-gray-400">Enter a Base64 image data string to preview it</p>
           </div>
           
           <!-- Base64 Image Input -->
           <div class="mb-6">
-            <label for="imageBase64Input" class="block text-sm font-medium text-gray-700 mb-1">Base64 Image String</label>
+            <label for="imageBase64Input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Base64 Image String</label>
             <div class="relative">
-              <textarea id="imageBase64Input" rows="4" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="Paste Base64 image data here (e.g., data:image/png;base64,iVBORw0...)"></textarea>
-              <button id="previewImageBtn" class="absolute bottom-2 right-2 px-3 py-1 bg-primary text-white rounded hover:bg-cyan-600 transition">
+              <textarea id="imageBase64Input" rows="4" class="textarea" placeholder="Paste Base64 image data here (e.g., data:image/png;base64,iVBORw0...)"></textarea>
+              <button id="previewImageBtn" class="absolute bottom-2 right-2 px-3 py-1 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition">
                 Preview
               </button>
             </div>
@@ -209,19 +209,19 @@
           
           <!-- Image Preview -->
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Image Preview</label>
-            <div class="border rounded-lg p-4 bg-gray-50 flex items-center justify-center min-h-[200px]">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image Preview</label>
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800 flex items-center justify-center min-h-[200px]">
               <img id="imagePreview" class="max-w-full max-h-[300px] hidden" alt="Base64 image preview">
-              <p id="imagePreviewPlaceholder" class="text-gray-500">Image preview will appear here</p>
+              <p id="imagePreviewPlaceholder" class="text-gray-500 dark:text-gray-400">Image preview will appear here</p>
             </div>
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
               <span id="imageInfo">No image loaded</span>
             </div>
           </div>
           
           <!-- Download Image -->
           <div class="text-center">
-            <button id="downloadImageBtn" class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition" disabled>
+            <button id="downloadImageBtn" class="btn px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition" disabled>
               Download Image
             </button>
           </div>
@@ -230,36 +230,36 @@
     </div>
     
     <!-- Usage Tips -->
-    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-lg font-bold text-gray-900 mb-4">Base64 Tool Usage Tips</h2>
+    <div class="card mt-8">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Base64 Tool Usage Tips</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <h3 class="text-md font-semibold text-gray-800 mb-2">Text Encoding/Decoding</h3>
-          <ul class="space-y-1 text-sm text-gray-600 list-disc pl-5">
+          <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Text Encoding/Decoding</h3>
+          <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400 list-disc pl-5">
             <li>Use the <span class="font-medium">Text</span> tab for encoding/decoding text strings</li>
             <li>Enable <span class="font-medium">URL-safe encoding</span> for use in URLs and filenames</li>
             <li>Choose the appropriate character encoding based on your text content</li>
           </ul>
         </div>
         <div>
-          <h3 class="text-md font-semibold text-gray-800 mb-2">File Conversion</h3>
-          <ul class="space-y-1 text-sm text-gray-600 list-disc pl-5">
+          <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">File Conversion</h3>
+          <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400 list-disc pl-5">
             <li>Use the <span class="font-medium">File</span> tab to convert files to/from Base64</li>
             <li>Maximum recommended file size is 5MB for browser performance</li>
             <li>Base64 encoding increases file size by approximately 33%</li>
           </ul>
         </div>
         <div>
-          <h3 class="text-md font-semibold text-gray-800 mb-2">Image Preview</h3>
-          <ul class="space-y-1 text-sm text-gray-600 list-disc pl-5">
+          <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Image Preview</h3>
+          <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400 list-disc pl-5">
             <li>Use the <span class="font-medium">Image Preview</span> tab to visualize Base64 encoded images</li>
             <li>Ensure your Base64 string includes the data URL prefix (data:image/...)</li>
             <li>Supported formats include PNG, JPEG, GIF, SVG, and WebP</li>
           </ul>
         </div>
         <div>
-          <h3 class="text-md font-semibold text-gray-800 mb-2">What is Base64?</h3>
-          <p class="text-sm text-gray-600">
+          <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">What is Base64?</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
             Base64 is a binary-to-text encoding scheme that represents binary data in ASCII format
             by translating it into a radix-64 representation. It's commonly used for transmitting
             binary data over text-based protocols.
@@ -269,6 +269,9 @@
     </div>
   </div>
 
+  <!-- Include shared JavaScript files -->
+  <script src="../assets/js/utils.js"></script>
+  
   <script>
     // Tab Switching
     const textTab = document.getElementById('textTab');
@@ -293,17 +296,17 @@
     const outputSizeInfo = document.getElementById('outputSizeInfo');
     
     // File Tab Elements
-    const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
     const fileInfo = document.getElementById('fileInfo');
     const fileToBase64Btn = document.getElementById('fileToBase64Btn');
     const base64ToFileBtn = document.getElementById('base64ToFileBtn');
     const fileBase64Output = document.getElementById('fileBase64Output');
-    const fileBase64Input = document.getElementById('fileBase64Input');
-    const fileNameInput = document.getElementById('fileNameInput');
     const copyFileBase64Btn = document.getElementById('copyFileBase64Btn');
     const fileOutputCharCount = document.getElementById('fileOutputCharCount');
     const fileOutputSizeInfo = document.getElementById('fileOutputSizeInfo');
+    const fileBase64Input = document.getElementById('fileBase64Input');
+    const fileNameInput = document.getElementById('fileNameInput');
     const downloadFileBtn = document.getElementById('downloadFileBtn');
     
     // Image Tab Elements
@@ -314,184 +317,208 @@
     const imageInfo = document.getElementById('imageInfo');
     const downloadImageBtn = document.getElementById('downloadImageBtn');
     
-    // Current state
-    let mode = 'encode';
+    // App State
+    let currentMode = 'encode'; // 'encode' or 'decode'
     let selectedFile = null;
-    let currentMimeType = '';
+    let isUrlSafe = false;
     
-    // Tab Switching Logic
-    textTab.addEventListener('click', () => {
-      setActiveTab('text');
-    });
+    // Helper Functions
     
-    fileTab.addEventListener('click', () => {
-      setActiveTab('file');
-    });
-    
-    imageTab.addEventListener('click', () => {
-      setActiveTab('image');
-    });
-    
-    function setActiveTab(tabName) {
-      // Reset all tabs
-      [textTab, fileTab, imageTab].forEach(tab => {
-        tab.classList.remove('text-primary', 'border-b-2', 'border-primary');
-        tab.classList.add('text-gray-500', 'hover:text-gray-700');
-      });
-      
-      // Reset all content
-      [textTabContent, fileTabContent, imageTabContent].forEach(content => {
-        content.classList.add('hidden');
-      });
-      
-      // Set active tab
-      if (tabName === 'text') {
-        textTab.classList.add('text-primary', 'border-b-2', 'border-primary');
-        textTab.classList.remove('text-gray-500', 'hover:text-gray-700');
-        textTabContent.classList.remove('hidden');
-      } else if (tabName === 'file') {
-        fileTab.classList.add('text-primary', 'border-b-2', 'border-primary');
-        fileTab.classList.remove('text-gray-500', 'hover:text-gray-700');
-        fileTabContent.classList.remove('hidden');
-      } else if (tabName === 'image') {
-        imageTab.classList.add('text-primary', 'border-b-2', 'border-primary');
-        imageTab.classList.remove('text-gray-500', 'hover:text-gray-700');
-        imageTabContent.classList.remove('hidden');
+    // Base64 Encode function
+    function base64Encode(str, encoding = 'utf8') {
+      try {
+        let bytes;
+        if (encoding === 'utf8') {
+          bytes = new TextEncoder().encode(str);
+        } else if (encoding === 'iso88591') {
+          bytes = new Uint8Array(str.split('').map(char => char.charCodeAt(0)));
+        } else { // ascii
+          bytes = new Uint8Array(str.split('').map(char => char.charCodeAt(0) & 0x7F));
+        }
+        
+        const binString = Array.from(bytes)
+          .map(byte => String.fromCharCode(byte))
+          .join('');
+        
+        const base64 = btoa(binString);
+        
+        // Handle URL safe option
+        return isUrlSafe ? base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '') : base64;
+      } catch (error) {
+        console.error('Encoding error:', error);
+        return 'Error: Invalid input for encoding';
       }
     }
     
-    // Text Tab Logic
+    // Base64 Decode function
+    function base64Decode(str, encoding = 'utf8') {
+      try {
+        // Handle URL safe characters
+        if (isUrlSafe) {
+          // Restore standard base64 characters
+          str = str.replace(/-/g, '+').replace(/_/g, '/');
+          
+          // Add padding if needed
+          while (str.length % 4) {
+            str += '=';
+          }
+        }
+        
+        const binString = atob(str);
+        const bytes = new Uint8Array(binString.length);
+        
+        for (let i = 0; i < binString.length; i++) {
+          bytes[i] = binString.charCodeAt(i);
+        }
+        
+        if (encoding === 'utf8') {
+          return new TextDecoder().decode(bytes);
+        } else {
+          return Array.from(bytes)
+            .map(byte => String.fromCharCode(byte))
+            .join('');
+        }
+      } catch (error) {
+        console.error('Decoding error:', error);
+        return 'Error: Invalid base64 input';
+      }
+    }
+    
+    // Format file size
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' bytes';
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+      else return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+    
+    // Copy text to clipboard
+    function copyToClipboard(text, button) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          // Show success feedback
+          const originalHTML = button.innerHTML;
+          button.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          `;
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+          }, 2000);
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+    }
+    
+    // Event Handlers
+    
+    // Tab switching
+    textTab.addEventListener('click', () => {
+      textTab.className = 'px-4 py-2 text-cyan-500 border-b-2 border-cyan-500';
+      fileTab.className = 'px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+      imageTab.className = 'px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+      
+      textTabContent.classList.remove('hidden');
+      fileTabContent.classList.add('hidden');
+      imageTabContent.classList.add('hidden');
+    });
+    
+    fileTab.addEventListener('click', () => {
+      fileTab.className = 'px-4 py-2 text-cyan-500 border-b-2 border-cyan-500';
+      textTab.className = 'px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+      imageTab.className = 'px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+      
+      fileTabContent.classList.remove('hidden');
+      textTabContent.classList.add('hidden');
+      imageTabContent.classList.add('hidden');
+    });
+    
+    imageTab.addEventListener('click', () => {
+      imageTab.className = 'px-4 py-2 text-cyan-500 border-b-2 border-cyan-500';
+      textTab.className = 'px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+      fileTab.className = 'px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+      
+      imageTabContent.classList.remove('hidden');
+      textTabContent.classList.add('hidden');
+      fileTabContent.classList.add('hidden');
+    });
+    
+    // Text tab event handlers
     encodeBtn.addEventListener('click', () => {
-      mode = 'encode';
-      encodeBtn.classList.add('bg-primary', 'text-white');
-      encodeBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
-      decodeBtn.classList.remove('bg-primary', 'text-white');
-      decodeBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
+      currentMode = 'encode';
+      encodeBtn.className = 'px-4 py-2 bg-cyan-500 text-white rounded-l-lg';
+      decodeBtn.className = 'px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-r-lg';
       convertBtn.textContent = 'Encode';
-      convertBase64();
+      inputText.placeholder = 'Enter text to encode';
+      outputText.value = '';
+      outputCharCount.textContent = 'Characters: 0';
     });
     
     decodeBtn.addEventListener('click', () => {
-      mode = 'decode';
-      decodeBtn.classList.add('bg-primary', 'text-white');
-      decodeBtn.classList.remove('text-gray-700', 'hover:bg-gray-100');
-      encodeBtn.classList.remove('bg-primary', 'text-white');
-      encodeBtn.classList.add('text-gray-700', 'hover:bg-gray-100');
+      currentMode = 'decode';
+      decodeBtn.className = 'px-4 py-2 bg-cyan-500 text-white rounded-r-lg';
+      encodeBtn.className = 'px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-l-lg';
       convertBtn.textContent = 'Decode';
-      convertBase64();
+      inputText.placeholder = 'Enter Base64 to decode';
+      outputText.value = '';
+      outputCharCount.textContent = 'Characters: 0';
+    });
+    
+    urlSafeCheckbox.addEventListener('change', () => {
+      isUrlSafe = urlSafeCheckbox.checked;
+    });
+    
+    inputText.addEventListener('input', () => {
+      inputCharCount.textContent = `Characters: ${inputText.value.length}`;
     });
     
     clearInputBtn.addEventListener('click', () => {
       inputText.value = '';
+      inputCharCount.textContent = 'Characters: 0';
       outputText.value = '';
-      updateCharCounts();
+      outputCharCount.textContent = 'Characters: 0';
     });
     
-    convertBtn.addEventListener('click', convertBase64);
+    convertBtn.addEventListener('click', () => {
+      const input = inputText.value;
+      if (!input) return;
+      
+      let output;
+      const encoding = encodingSelect.value;
+      
+      if (currentMode === 'encode') {
+        output = base64Encode(input, encoding);
+      } else {
+        output = base64Decode(input, encoding);
+      }
+      
+      outputText.value = output;
+      outputCharCount.textContent = `Characters: ${output.length}`;
+      
+      // Calculate approximate size
+      const byteSize = new Blob([output]).size;
+      outputSizeInfo.textContent = `Size: ${formatFileSize(byteSize)}`;
+      outputSizeInfo.classList.remove('hidden');
+    });
     
     copyBtn.addEventListener('click', () => {
-      if (outputText.value) {
-        navigator.clipboard.writeText(outputText.value)
-          .then(() => {
-            const originalHTML = copyBtn.innerHTML;
-            copyBtn.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            `;
-            setTimeout(() => {
-              copyBtn.innerHTML = originalHTML;
-            }, 1500);
-          })
-          .catch(err => {
-            console.error('Failed to copy: ', err);
-          });
+      copyToClipboard(outputText.value, copyBtn);
+    });
+    
+    // File tab event handlers
+    fileInput.addEventListener('change', (e) => {
+      selectedFile = e.target.files[0];
+      if (selectedFile) {
+        fileInfo.textContent = `${selectedFile.name} (${formatFileSize(selectedFile.size)})`;
+        fileToBase64Btn.disabled = false;
+      } else {
+        fileInfo.textContent = 'No file selected';
+        fileToBase64Btn.disabled = true;
       }
     });
     
-    inputText.addEventListener('input', () => {
-      updateCharCounts();
-    });
-    
-    urlSafeCheckbox.addEventListener('change', convertBase64);
-    
-    encodingSelect.addEventListener('change', convertBase64);
-    
-    function convertBase64() {
-      try {
-        const input = inputText.value.trim();
-        const encoding = encodingSelect.value;
-        
-        if (!input) {
-          outputText.value = '';
-          updateCharCounts();
-          return;
-        }
-        
-        if (mode === 'encode') {
-          // Encode to Base64
-          let encodedText;
-          if (encoding === 'utf8') {
-            encodedText = btoa(unescape(encodeURIComponent(input)));
-          } else if (encoding === 'ascii') {
-            encodedText = btoa(input);
-          } else if (encoding === 'iso88591') {
-            encodedText = btoa(unescape(encodeURIComponent(input)));
-          }
-          
-          // Apply URL-safe encoding if checked
-          if (urlSafeCheckbox.checked) {
-            outputText.value = encodedText
-              .replace(/\+/g, '-')
-              .replace(/\//g, '_')
-              .replace(/=/g, '');
-          } else {
-            outputText.value = encodedText;
-          }
-        } else {
-          // Decode from Base64
-          let textToDecode = input;
-          
-          // Handle URL-safe encoding
-          if (urlSafeCheckbox.checked) {
-            textToDecode = textToDecode
-              .replace(/-/g, '+')
-              .replace(/_/g, '/');
-              
-            // Add padding if needed
-            while (textToDecode.length % 4) {
-              textToDecode += '=';
-            }
-          }
-          
-          try {
-            outputText.value = decodeURIComponent(escape(atob(textToDecode)));
-          } catch (e) {
-            outputText.value = `Error decoding Base64: ${e.message}`;
-          }
-        }
-      } catch (e) {
-        outputText.value = `Error: ${e.message}`;
-      }
-      
-      updateCharCounts();
-    }
-    
-    function updateCharCounts() {
-      inputCharCount.textContent = `Characters: ${inputText.value.length}`;
-      outputCharCount.textContent = `Characters: ${outputText.value.length}`;
-      
-      // Calculate size in KB for output
-      const bytes = new Blob([outputText.value]).size;
-      const kilobytes = (bytes / 1024).toFixed(2);
-      outputSizeInfo.textContent = `Size: ${kilobytes} KB`;
-      outputSizeInfo.classList.remove('hidden');
-    }
-    
-    // File Tab Logic
-    fileInput.addEventListener('change', handleFileSelect);
-    
-    // Setup drag & drop functionality
+    // Drag and drop handling
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
       dropZone.classList.add('drag-active');
@@ -506,209 +533,153 @@
       dropZone.classList.remove('drag-active');
       
       if (e.dataTransfer.files.length) {
-        fileInput.files = e.dataTransfer.files;
-        handleFileSelect({target: fileInput});
+        selectedFile = e.dataTransfer.files[0];
+        fileInfo.textContent = `${selectedFile.name} (${formatFileSize(selectedFile.size)})`;
+        fileToBase64Btn.disabled = false;
       }
     });
     
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (!file) {
-        return;
-      }
-      
-      selectedFile = file;
-      currentMimeType = file.type || 'application/octet-stream';
-      
-      // Update file info display
-      fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
-      
-      // Enable file to Base64 button
-      fileToBase64Btn.disabled = false;
-      
-      // Clear output
-      fileBase64Output.value = '';
-      fileOutputCharCount.textContent = 'Characters: 0';
-      fileOutputSizeInfo.textContent = 'Size: 0 KB';
-      
-      // Enable Base64 to file button if this is an image
-      if (file.type.startsWith('image/')) {
-        base64ToFileBtn.disabled = false;
-      } else {
-        base64ToFileBtn.disabled = true;
-      }
-    }
-    
-    fileToBase64Btn.addEventListener('click', convertFileToBase64);
-    
-    function convertFileToBase64() {
-      if (!selectedFile) {
-        alert('Please select a file first');
-        return;
-      }
+    fileToBase64Btn.addEventListener('click', () => {
+      if (!selectedFile) return;
       
       const reader = new FileReader();
-      reader.readAsDataURL(selectedFile);
-      
-      reader.onload = () => {
-        fileBase64Output.value = reader.result;
+      reader.onload = (e) => {
+        // Get the base64 string (remove the data:xxx;base64, prefix)
+        const base64String = e.target.result.split(',')[1];
         
-        // Update character count and size
-        fileOutputCharCount.textContent = `Characters: ${reader.result.length}`;
-        const bytes = new Blob([reader.result]).size;
-        const kilobytes = (bytes / 1024).toFixed(2);
-        fileOutputSizeInfo.textContent = `Size: ${kilobytes} KB`;
+        fileBase64Output.value = base64String;
+        fileOutputCharCount.textContent = `Characters: ${base64String.length}`;
+        fileOutputSizeInfo.textContent = `Size: ${formatFileSize(selectedFile.size)}`;
       };
       
-      reader.onerror = (error) => {
-        fileBase64Output.value = `Error: ${error}`;
-      };
-    }
+      reader.readAsDataURL(selectedFile);
+    });
     
     copyFileBase64Btn.addEventListener('click', () => {
-      if (fileBase64Output.value) {
-        navigator.clipboard.writeText(fileBase64Output.value)
-          .then(() => {
-            const originalHTML = copyFileBase64Btn.innerHTML;
-            copyFileBase64Btn.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-            `;
-            setTimeout(() => {
-              copyFileBase64Btn.innerHTML = originalHTML;
-            }, 1500);
-          })
-          .catch(err => {
-            console.error('Failed to copy: ', err);
-          });
-      }
+      copyToClipboard(fileBase64Output.value, copyFileBase64Btn);
+    });
+    
+    fileBase64Input.addEventListener('input', () => {
+      base64ToFileBtn.disabled = fileBase64Input.value.length === 0;
     });
     
     downloadFileBtn.addEventListener('click', () => {
-      const base64Data = fileBase64Input.value.trim();
-      const fileName = fileNameInput.value.trim();
-      
-      if (!base64Data) {
-        alert('Please enter a Base64 string');
-        return;
-      }
-      
-      if (!fileName) {
-        alert('Please enter a file name');
-        return;
-      }
+      const base64String = fileBase64Input.value;
+      if (!base64String) return;
       
       try {
-        // Handle data URLs (e.g., data:image/png;base64,...)
-        let rawBase64 = base64Data;
-        let mimeType = 'application/octet-stream';
+        // Determine if the string already has a data URL prefix
+        const hasDataUrlPrefix = /^data:[^;]+;base64,/.test(base64String);
         
-        if (base64Data.startsWith('data:')) {
-          const parts = base64Data.split(',');
-          mimeType = parts[0].match(/:(.*?);/)[1];
-          rawBase64 = parts[1];
+        let dataUrl;
+        if (hasDataUrlPrefix) {
+          dataUrl = base64String;
+        } else {
+          // Try to guess MIME type from file extension
+          let mimeType = 'application/octet-stream'; // Default
+          const fileName = fileNameInput.value || 'download';
+          const extension = fileName.split('.').pop().toLowerCase();
+          
+          // Map common extensions to MIME types
+          const mimeTypes = {
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'svg': 'image/svg+xml',
+            'pdf': 'application/pdf',
+            'txt': 'text/plain',
+            'json': 'application/json',
+            'html': 'text/html',
+            'css': 'text/css',
+            'js': 'text/javascript'
+          };
+          
+          if (mimeTypes[extension]) {
+            mimeType = mimeTypes[extension];
+          }
+          
+          dataUrl = `data:${mimeType};base64,${base64String}`;
         }
         
-        // Convert Base64 to Blob
-        const binaryString = atob(rawBase64);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
+        // Create a link and trigger download
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = fileNameInput.value || 'download';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         
-        const blob = new Blob([bytes], { type: mimeType });
-        
-        // Create download link
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Cleanup
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 0);
       } catch (error) {
-        alert(`Error creating file: ${error.message}`);
+        console.error('Error creating download:', error);
+        alert('Failed to create download. Please check the Base64 data and try again.');
       }
     });
     
-    // Image Preview Tab Logic
+    // Image tab event handlers
     previewImageBtn.addEventListener('click', () => {
-      const base64Data = imageBase64Input.value.trim();
+      const base64Input = imageBase64Input.value;
+      if (!base64Input) return;
       
-      if (!base64Data) {
-        alert('Please enter a Base64 image string');
-        return;
-      }
-      
-      // Check if it's a valid data URL
-      if (!base64Data.startsWith('data:image/')) {
-        // Try to make it a valid data URL
-        if (base64Data.match(/^[A-Za-z0-9+/=]+$/)) {
-          imagePreview.src = `data:image/png;base64,${base64Data}`;
+      try {
+        // Check if the input has data URL prefix
+        const hasDataUrlPrefix = /^data:[^;]+;base64,/.test(base64Input);
+        
+        let dataUrl;
+        if (hasDataUrlPrefix) {
+          dataUrl = base64Input;
         } else {
-          alert('Invalid Base64 image data. Make sure it starts with "data:image/" or is a valid Base64 string.');
-          return;
+          // Assume it's a plain base64 string for an image
+          dataUrl = `data:image/png;base64,${base64Input}`;
         }
-      } else {
-        imagePreview.src = base64Data;
-      }
-      
-      // Show the image and hide the placeholder
-      imagePreview.classList.remove('hidden');
-      imagePreviewPlaceholder.classList.add('hidden');
-      
-      // Update image info
-      const imageType = imagePreview.src.split(';')[0].split(':')[1];
-      imageInfo.textContent = `Image type: ${imageType}`;
-      
-      // Enable download button
-      downloadImageBtn.disabled = false;
-      
-      // Handle image load error
-      imagePreview.onerror = () => {
-        imagePreview.classList.add('hidden');
+        
+        // Update the image preview
+        imagePreview.src = dataUrl;
+        imagePreview.classList.remove('hidden');
+        imagePreviewPlaceholder.classList.add('hidden');
+        
+        // Update download button and info
+        downloadImageBtn.disabled = false;
+        
+        // Extract image information
+        const imageType = dataUrl.split(';')[0].split(':')[1];
+        const base64Data = hasDataUrlPrefix ? 
+          dataUrl.split(',')[1] : base64Input;
+        const approxSize = Math.ceil((base64Data.length * 3) / 4);
+        
+        imageInfo.textContent = `Type: ${imageType}, Size: ${formatFileSize(approxSize)}`;
+      } catch (error) {
+        console.error('Error previewing image:', error);
+        imagePreviewPlaceholder.textContent = 'Error previewing image. Please check the Base64 data.';
         imagePreviewPlaceholder.classList.remove('hidden');
-        imagePreviewPlaceholder.textContent = 'Invalid image data';
-        imageInfo.textContent = 'Failed to load image';
+        imagePreview.classList.add('hidden');
         downloadImageBtn.disabled = true;
-      };
+      }
     });
     
     downloadImageBtn.addEventListener('click', () => {
-      const imgSrc = imagePreview.src;
-      if (!imgSrc) return;
-      
-      // Create a link to download the image
-      const a = document.createElement('a');
-      a.href = imgSrc;
-      a.download = 'image.' + (imgSrc.split(';')[0].split('/')[1] || 'png');
-      document.body.appendChild(a);
-      a.click();
-      
-      // Cleanup
-      setTimeout(() => {
-        document.body.removeChild(a);
-      }, 0);
+      // Use the current image source to create a download
+      if (imagePreview.src) {
+        const link = document.createElement('a');
+        link.href = imagePreview.src;
+        link.download = 'image'; // Default name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     });
     
-    function formatFileSize(size) {
-      if (size < 1024) {
-        return `${size} bytes`;
-      } else if (size < 1024 * 1024) {
-        return `${(size / 1024).toFixed(2)} KB`;
-      } else {
-        return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-      }
-    }
-    
-    // Initialize with an empty string conversion
-    updateCharCounts();
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize theme
+      themeUtils.initTheme();
+      
+      // Set up initial state
+      inputCharCount.textContent = 'Characters: 0';
+      outputCharCount.textContent = 'Characters: 0';
+      fileOutputCharCount.textContent = 'Characters: 0';
+    });
   </script>
 </body>
 </html>
