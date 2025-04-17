@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Tool</title>
+  <!-- Include TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Include our shared CSS -->
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5', // indigo-600
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .calculator-button {
+      @apply text-xl font-semibold rounded-lg py-3 transition-transform active:scale-95;
+    }
+    
+    .calculator-display {
+      font-family: 'Courier New', monospace;
+    }
+    
+    .history-item {
+      transition: background-color 0.2s ease;
+    }
+    
+    .history-item:hover {
+      @apply bg-gray-50 dark:bg-gray-800;
+    }
+    
+    .function-button {
+      @apply text-sm bg-indigo-100 text-indigo-600 rounded-lg py-1 px-2 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800;
+    }
+  </style>
+</head>
+<body class="theme-math-tool">
+  <div class="container mx-auto py-8 px-4 max-w-5xl">
+    <!-- Header -->
+    <div class="tool-header">
+      <div>
+        <h1 class="tool-title">Math Tool</h1>
+        <p class="tool-description">Perform calculations with this advanced calculator</p>
+      </div>
+      <a href="../dashboard/dashboard.html" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Calculator -->
+      <div class="lg:col-span-2">
+        <div class="card">
+          <h2 class="text-xl font-bold mb-4">Calculator</h2>
+          
+          <!-- Calculator Display -->
+          <div class="mb-4">
+            <div class="flex flex-col bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+              <div class="text-right text-gray-500 dark:text-gray-400 text-sm mb-1" id="expression">0</div>
+              <div class="text-right text-3xl font-bold calculator-display" id="result">0</div>
+            </div>
+          </div>
+          
+          <!-- Scientific Functions -->
+          <div class="mb-4 overflow-x-auto whitespace-nowrap py-2 px-1">
+            <div class="flex space-x-2">
+              <button class="function-button" data-function="Math.sin">sin</button>
+              <button class="function-button" data-function="Math.cos">cos</button>
+              <button class="function-button" data-function="Math.tan">tan</button>
+              <button class="function-button" data-function="Math.log10">log</button>
+              <button class="function-button" data-function="Math.log">ln</button>
+              <button class="function-button" data-function="Math.sqrt">√</button>
+              <button class="function-button" data-function="Math.pow" data-needs-closing="true">^</button>
+              <button class="function-button" data-function="Math.abs">|x|</button>
+              <button class="function-button" data-function="Math.PI">π</button>
+              <button class="function-button" data-function="Math.E">e</button>
+            </div>
+          </div>
+          
+          <!-- Calculator Buttons -->
+          <div class="grid grid-cols-4 gap-2">
+            <!-- First Row -->
+            <button class="calculator-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300" data-action="clear">C</button>
+            <button class="calculator-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300" data-action="bracket">()</button>
+            <button class="calculator-button bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300" data-action="percent">%</button>
+            <button class="calculator-button bg-primary text-white" data-operation="/">÷</button>
+            
+            <!-- Second Row -->
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="7">7</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="8">8</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="9">9</button>
+            <button class="calculator-button bg-primary text-white" data-operation="*">×</button>
+            
+            <!-- Third Row -->
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="4">4</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="5">5</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="6">6</button>
+            <button class="calculator-button bg-primary text-white" data-operation="-">−</button>
+            
+            <!-- Fourth Row -->
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="1">1</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="2">2</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="3">3</button>
+            <button class="calculator-button bg-primary text-white" data-operation="+">+</button>
+            
+            <!-- Fifth Row -->
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-action="plusMinus">±</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number="0">0</button>
+            <button class="calculator-button bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" data-number=".">.</button>
+            <button class="calculator-button bg-green-500 text-white" data-action="equals">=</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- History & Tools -->
+      <div>
+        <!-- Calculation History -->
+        <div class="card mb-6">
+          <h2 class="text-xl font-bold mb-4">History</h2>
+          <div id="historyList" class="space-y-2 max-h-80 overflow-y-auto">
+            <div class="text-gray-500 dark:text-gray-400 text-center py-2">No calculations yet</div>
+          </div>
+          
+          <div class="mt-4 flex justify-end">
+            <button id="clearHistoryBtn" class="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+              Clear History
+            </button>
+          </div>
+        </div>
+        
+        <!-- Additional Tools -->
+        <div class="card">
+          <h2 class="text-xl font-bold mb-4">Unit Conversions</h2>
+          
+          <!-- Unit Converter Tabs -->
+          <div class="mb-4 border-b">
+            <div class="flex space-x-1">
+              <button id="lengthBtn" class="px-4 py-2 text-primary border-b-2 border-primary">Length</button>
+              <button id="tempBtn" class="px-4 py-2 text-gray-500 hover:text-gray-700">Temperature</button>
+              <button id="weightBtn" class="px-4 py-2 text-gray-500 hover:text-gray-700">Weight</button>
+            </div>
+          </div>
+          
+          <!-- Length Conversion -->
+          <div id="lengthConversion" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">From:</label>
+                <div class="flex space-x-2">
+                  <input type="number" id="lengthFrom" class="input" value="1">
+                  <select id="lengthFromUnit" class="input w-full">
+                    <option value="m">Meters</option>
+                    <option value="cm">Centimeters</option>
+                    <option value="km">Kilometers</option>
+                    <option value="in">Inches</option>
+                    <option value="ft">Feet</option>
+                    <option value="yd">Yards</option>
+                    <option value="mi">Miles</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">To:</label>
+                <div class="flex space-x-2">
+                  <input type="number" id="lengthTo" class="input bg-gray-50 dark:bg-gray-800" readonly>
+                  <select id="lengthToUnit" class="input w-full">
+                    <option value="cm">Centimeters</option>
+                    <option value="m">Meters</option>
+                    <option value="km">Kilometers</option>
+                    <option value="in">Inches</option>
+                    <option value="ft">Feet</option>
+                    <option value="yd">Yards</option>
+                    <option value="mi">Miles</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600 dark:text-gray-400 border-t pt-2 mt-2">
+              <div id="lengthFormula">1 meter = 100 centimeters</div>
+            </div>
+          </div>
+          
+          <!-- Temperature Conversion -->
+          <div id="tempConversion" class="space-y-4 hidden">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">From:</label>
+                <div class="flex space-x-2">
+                  <input type="number" id="tempFrom" class="input" value="1">
+                  <select id="tempFromUnit" class="input w-full">
+                    <option value="c">Celsius</option>
+                    <option value="f">Fahrenheit</option>
+                    <option value="k">Kelvin</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">To:</label>
+                <div class="flex space-x-2">
+                  <input type="number" id="tempTo" class="input bg-gray-50 dark:bg-gray-800" readonly>
+                  <select id="tempToUnit" class="input w-full">
+                    <option value="f">Fahrenheit</option>
+                    <option value="c">Celsius</option>
+                    <option value="k">Kelvin</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600 dark:text-gray-400 border-t pt-2 mt-2">
+              <div id="tempFormula">C = (F - 32) × 5/9</div>
+            </div>
+          </div>
+          
+          <!-- Weight Conversion -->
+          <div id="weightConversion" class="space-y-4 hidden">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">From:</label>
+                <div class="flex space-x-2">
+                  <input type="number" id="weightFrom" class="input" value="1">
+                  <select id="weightFromUnit" class="input w-full">
+                    <option value="kg">Kilograms</option>
+                    <option value="g">Grams</option>
+                    <option value="lb">Pounds</option>
+                    <option value="oz">Ounces</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">To:</label>
+                <div class="flex space-x-2">
+                  <input type="number" id="weightTo" class="input bg-gray-50 dark:bg-gray-800" readonly>
+                  <select id="weightToUnit" class="input w-full">
+                    <option value="lb">Pounds</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="g">Grams</option>
+                    <option value="oz">Ounces</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600 dark:text-gray-400 border-t pt-2 mt-2">
+              <div id="weightFormula">1 kilogram = 2.20462 pounds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include shared JavaScript files -->
+  <script src="../assets/js/utils.js"></script>
+  
+  <script>
+    // DOM Elements
+    const expression = document.getElementById('expression');
+    const result = document.getElementById('result');
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    
+    // Unit conversion elements
+    const lengthBtn = document.getElementById('lengthBtn');
+    const tempBtn = document.getElementById('tempBtn');
+    const weightBtn = document.getElementById('weightBtn');
+    const lengthConversion = document.getElementById('lengthConversion');
+    const tempConversion = document.getElementById('tempConversion');
+    const weightConversion = document.getElementById('weightConversion');
+    
+    // Calculator state
+    let currentExpression = '';
+    let calculationHistory = [];
+    let lastResult = 0;
+    let isNewExpression = true;
+    let openBrackets = 0;
+    
+    // Load calculation history from localStorage
+    function loadHistory() {
+      const savedHistory = storageUtils.loadData('calculationHistory', []);
+      if (savedHistory && savedHistory.length > 0) {
+        calculationHistory = savedHistory;
+        updateHistoryDisplay();
+      }
+    }
+    
+    // Save calculation history to localStorage
+    function saveHistory() {
+      storageUtils.saveData('calculationHistory', calculationHistory);
+    }
+    
+    // Update the expression display
+    function updateExpression(newExpression) {
+      currentExpression = newExpression;
+      expression.textContent = currentExpression || '0';
+    }
+    
+    // Add a number to the expression
+    function addNumber(num) {
+      if (isNewExpression) {
+        updateExpression(num);
+        isNewExpression = false;
+      } else {
+        updateExpression(currentExpression + num);
+      }
+    }
+    
+    // Add an operation to the expression
+    function addOperation(op) {
+      if (currentExpression === '') {
+        if (op === '-') {
+          // Allow negative numbers
+          updateExpression('-');
+        } else {
+          updateExpression('0' + op);
+        }
+      } else {
+        // Handle consecutive operations - replace the last one
+        const lastChar = currentExpression.slice(-1);
+        if (['+', '-', '*', '/'].includes(lastChar)) {
+          updateExpression(currentExpression.slice(0, -1) + op);
+        } else {
+          updateExpression(currentExpression + op);
+        }
+      }
+      isNewExpression = false;
+    }
+    
+    // Clear the calculator
+    function clearCalculator() {
+      updateExpression('');
+      result.textContent = '0';
+      isNewExpression = true;
+      openBrackets = 0;
+    }
+    
+    // Add a calculation to history
+    function addToHistory(expr, res) {
+      // Only add calculations with results
+      if (expr && res !== undefined) {
+        calculationHistory.unshift({
+          expression: expr,
+          result: res,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Limit history to 20 entries
+        if (calculationHistory.length > 20) {
+          calculationHistory.pop();
+        }
+        
+        saveHistory();
+        updateHistoryDisplay();
+      }
+    }
+    
+    // Update history display
+    function updateHistoryDisplay() {
+      if (calculationHistory.length === 0) {
+        historyList.innerHTML = '<div class="text-gray-500 dark:text-gray-400 text-center py-2">No calculations yet</div>';
+        return;
+      }
+      
+      historyList.innerHTML = '';
+      calculationHistory.forEach(item => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item p-2 rounded cursor-pointer';
+        historyItem.innerHTML = `
+          <div class="text-sm text-gray-600 dark:text-gray-400">${item.expression}</div>
+          <div class="text-lg font-bold">${item.result}</div>
+        `;
+        
+        historyItem.addEventListener('click', () => {
+          // Load this calculation into the calculator
+          updateExpression(item.expression);
+          result.textContent = item.result;
+          isNewExpression = true; // Set to true so next number input starts fresh
+        });
+        
+        historyList.appendChild(historyItem);
+      });
+    }
+    
+    // Calculate the result
+    function calculate() {
+      try {
+        let expr = currentExpression;
+        
+        // Close any open brackets
+        while (openBrackets > 0) {
+          expr += ')';
+          openBrackets--;
+        }
+        
+        // Replace UI operators with JavaScript operators
+        expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+        
+        // Handle percentages
+        expr = expr.replace(/(\d+(\.\d+)?)%/g, function(match, num) {
+          return num + '/100';
+        });
+        
+        // Evaluate the expression
+        const calculatedResult = new Function('return ' + expr)();
+        
+        // Format the result
+        let formattedResult;
+        if (Number.isInteger(calculatedResult)) {
+          formattedResult = calculatedResult.toString();
+        } else {
+          formattedResult = calculatedResult.toFixed(8).replace(/\.?0+$/, '');
+        }
+        
+        result.textContent = formattedResult;
+        lastResult = calculatedResult;
+        
+        // Add to history
+        addToHistory(expr, formattedResult);
+        
+        isNewExpression = true;
+        openBrackets = 0;
+      } catch (error) {
+        result.textContent = 'Error';
+        console.error('Calculation error:', error);
+      }
+    }
+    
+    // Toggle between positive and negative
+    function togglePlusMinus() {
+      if (currentExpression === '') return;
+      
+      if (currentExpression.startsWith('-')) {
+        updateExpression(currentExpression.substring(1));
+      } else {
+        updateExpression('-' + currentExpression);
+      }
+    }
+    
+    // Handle brackets
+    function handleBrackets() {
+      if (isNewExpression) {
+        updateExpression('(');
+        openBrackets++;
+        isNewExpression = false;
+      } else {
+        // Check if we should open or close a bracket
+        const lastChar = currentExpression.slice(-1);
+        
+        if (openBrackets > 0 && !['+', '-', '*', '/', '('].includes(lastChar)) {
+          // Close a bracket
+          updateExpression(currentExpression + ')');
+          openBrackets--;
+        } else {
+          // Open a bracket
+          if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ')', '.'].includes(lastChar)) {
+            updateExpression(currentExpression + '*(');
+          } else {
+            updateExpression(currentExpression + '(');
+          }
+          openBrackets++;
+        }
+      }
+    }
+    
+    // Handle percent
+    function handlePercent() {
+      if (currentExpression === '') return;
+      
+      if (!isNaN(parseFloat(currentExpression))) {
+        const value = parseFloat(currentExpression) / 100;
+        updateExpression(value.toString());
+      } else {
+        // More complex expressions - add % to the last number
+        updateExpression(currentExpression + '%');
+      }
+    }
+    
+    // Handle scientific functions
+    function handleFunction(funcName, needsClosing = false) {
+      if (funcName === 'Math.PI' || funcName === 'Math.E') {
+        // Constants
+        const constant = funcName === 'Math.PI' ? Math.PI : Math.E;
+        if (isNewExpression) {
+          updateExpression(constant.toString());
+          isNewExpression = false;
+        } else {
+          // Check if we need to add multiplication
+          const lastChar = currentExpression.slice(-1);
+          if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ')', '.'].includes(lastChar)) {
+            updateExpression(currentExpression + '*' + constant);
+          } else {
+            updateExpression(currentExpression + constant);
+          }
+        }
+      } else {
+        // Functions
+        if (funcName === 'Math.pow') {
+          // Special handling for power
+          updateExpression(currentExpression + '**');
+        } else {
+          if (isNewExpression) {
+            updateExpression(funcName + '(');
+            isNewExpression = false;
+          } else {
+            // Check if we need to add multiplication
+            const lastChar = currentExpression.slice(-1);
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ')', '.'].includes(lastChar)) {
+              updateExpression(currentExpression + '*' + funcName + '(');
+            } else {
+              updateExpression(currentExpression + funcName + '(');
+            }
+          }
+          openBrackets++;
+          
+          if (needsClosing) {
+            updateExpression(currentExpression + ')');
+            openBrackets--;
+          }
+        }
+      }
+    }
+    
+    // Initialize calculator
+    function initCalculator() {
+      // Add event listeners to calculator buttons
+      document.querySelectorAll('[data-number]').forEach(button => {
+        button.addEventListener('click', () => {
+          addNumber(button.getAttribute('data-number'));
+        });
+      });
+      
+      document.querySelectorAll('[data-operation]').forEach(button => {
+        button.addEventListener('click', () => {
+          addOperation(button.getAttribute('data-operation'));
+        });
+      });
+      
+      document.querySelectorAll('[data-action]').forEach(button => {
+        button.addEventListener('click', () => {
+          const action = button.getAttribute('data-action');
+          if (action === 'clear') clearCalculator();
+          if (action === 'equals') calculate();
+          if (action === 'plusMinus') togglePlusMinus();
+          if (action === 'bracket') handleBrackets();
+          if (action === 'percent') handlePercent();
+        });
+      });
+      
+      document.querySelectorAll('[data-function]').forEach(button => {
+        button.addEventListener('click', () => {
+          const funcName = button.getAttribute('data-function');
+          const needsClosing = button.getAttribute('data-needs-closing') === 'true';
+          handleFunction(funcName, needsClosing);
+        });
+      });
+      
+      clearHistoryBtn.addEventListener('click', () => {
+        calculationHistory = [];
+        saveHistory();
+        updateHistoryDisplay();
+      });
+      
+      // Load calculation history
+      loadHistory();
+      
+      // Also allow keyboard input
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    
+    // Handle keyboard input
+    function handleKeyDown(e) {
+      // Number keys
+      if (/^[0-9]$/.test(e.key)) {
+        addNumber(e.key);
+      }
+      
+      // Decimal point
+      if (e.key === '.') {
+        addNumber('.');
+      }
+      
+      // Operators
+      if (['+', '-', '*', '/'].includes(e.key)) {
+        addOperation(e.key);
+      }
+      
+      // Enter or = for calculation
+      if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        calculate();
+      }
+      
+      // Escape for clear
+      if (e.key === 'Escape') {
+        clearCalculator();
+      }
+      
+      // Backspace
+      if (e.key === 'Backspace') {
+        if (currentExpression.length > 0) {
+          updateExpression(currentExpression.slice(0, -1));
+        }
+      }
+      
+      // Brackets
+      if (e.key === '(' || e.key === ')') {
+        if (e.key === '(') {
+          if (isNewExpression) {
+            updateExpression('(');
+            isNewExpression = false;
+          } else {
+            // Check if we need multiplication
+            const lastChar = currentExpression.slice(-1);
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ')', '.'].includes(lastChar)) {
+              updateExpression(currentExpression + '*(');
+            } else {
+              updateExpression(currentExpression + '(');
+            }
+          }
+          openBrackets++;
+        } else if (e.key === ')' && openBrackets > 0) {
+          updateExpression(currentExpression + ')');
+          openBrackets--;
+        }
+      }
+    }
+    
+    // Unit Conversion Logic
+    
+    // Length conversion factors (to meters)
+    const lengthFactors = {
+      m: 1,       // meter (base unit)
+      cm: 0.01,   // centimeter
+      km: 1000,   // kilometer
+      in: 0.0254, // inch
+      ft: 0.3048, // foot
+      yd: 0.9144, // yard
+      mi: 1609.34 // mile
+    };
+    
+    // Temperature conversion functions
+    function convertTemperature(value, fromUnit, toUnit) {
+      // Convert to Kelvin first (as intermediate)
+      let kelvin;
+      
+      switch(fromUnit) {
+        case 'c': // Celsius to Kelvin
+          kelvin = value + 273.15;
+          break;
+        case 'f': // Fahrenheit to Kelvin
+          kelvin = (value + 459.67) * 5/9;
+          break;
+        case 'k': // Already Kelvin
+          kelvin = value;
+          break;
+      }
+      
+      // Convert from Kelvin to target unit
+      switch(toUnit) {
+        case 'c': // Kelvin to Celsius
+          return kelvin - 273.15;
+        case 'f': // Kelvin to Fahrenheit
+          return kelvin * 9/5 - 459.67;
+        case 'k': // Already Kelvin
+          return kelvin;
+      }
+    }
+    
+    // Weight conversion factors (to kilograms)
+    const weightFactors = {
+      kg: 1,       // kilogram (base unit)
+      g: 0.001,    // gram
+      lb: 0.453592, // pound
+      oz: 0.0283495 // ounce
+    };
+    
+    // Initialize unit converters
+    function initConverters() {
+      // Length converter
+      const lengthFrom = document.getElementById('lengthFrom');
+      const lengthFromUnit = document.getElementById('lengthFromUnit');
+      const lengthTo = document.getElementById('lengthTo');
+      const lengthToUnit = document.getElementById('lengthToUnit');
+      const lengthFormula = document.getElementById('lengthFormula');
+      
+      function updateLengthConversion() {
+        const from = lengthFrom.value;
+        const fromUnit = lengthFromUnit.value;
+        const toUnit = lengthToUnit.value;
+        
+        if (from && !isNaN(from)) {
+          // Convert to meters first, then to target unit
+          const meters = from * lengthFactors[fromUnit];
+          const converted = meters / lengthFactors[toUnit];
+          
+          lengthTo.value = converted.toFixed(8).replace(/\.?0+$/, '');
+          
+          // Update formula
+          const ratio = lengthFactors[fromUnit] / lengthFactors[toUnit];
+          lengthFormula.textContent = `1 ${fromUnit} = ${ratio.toFixed(6).replace(/\.?0+$/, '')} ${toUnit}`;
+        }
+      }
+      
+      lengthFrom.addEventListener('input', updateLengthConversion);
+      lengthFromUnit.addEventListener('change', updateLengthConversion);
+      lengthToUnit.addEventListener('change', updateLengthConversion);
+      
+      // Temperature converter
+      const tempFrom = document.getElementById('tempFrom');
+      const tempFromUnit = document.getElementById('tempFromUnit');
+      const tempTo = document.getElementById('tempTo');
+      const tempToUnit = document.getElementById('tempToUnit');
+      const tempFormula = document.getElementById('tempFormula');
+      
+      function updateTempConversion() {
+        const from = tempFrom.value;
+        const fromUnit = tempFromUnit.value;
+        const toUnit = tempToUnit.value;
+        
+        if (from && !isNaN(from)) {
+          const converted = convertTemperature(parseFloat(from), fromUnit, toUnit);
+          tempTo.value = converted.toFixed(2).replace(/\.?0+$/, '');
+          
+          // Update formula
+          if (fromUnit === 'c' && toUnit === 'f') {
+            tempFormula.textContent = 'F = (C × 9/5) + 32';
+          } else if (fromUnit === 'f' && toUnit === 'c') {
+            tempFormula.textContent = 'C = (F - 32) × 5/9';
+          } else if (fromUnit === 'c' && toUnit === 'k') {
+            tempFormula.textContent = 'K = C + 273.15';
+          } else if (fromUnit === 'k' && toUnit === 'c') {
+            tempFormula.textContent = 'C = K - 273.15';
+          } else if (fromUnit === 'f' && toUnit === 'k') {
+            tempFormula.textContent = 'K = (F + 459.67) × 5/9';
+          } else if (fromUnit === 'k' && toUnit === 'f') {
+            tempFormula.textContent = 'F = K × 9/5 - 459.67';
+          } else {
+            tempFormula.textContent = `${fromUnit.toUpperCase()} = ${toUnit.toUpperCase()}`;
+          }
+        }
+      }
+      
+      tempFrom.addEventListener('input', updateTempConversion);
+      tempFromUnit.addEventListener('change', updateTempConversion);
+      tempToUnit.addEventListener('change', updateTempConversion);
+      
+      // Weight converter
+      const weightFrom = document.getElementById('weightFrom');
+      const weightFromUnit = document.getElementById('weightFromUnit');
+      const weightTo = document.getElementById('weightTo');
+      const weightToUnit = document.getElementById('weightToUnit');
+      const weightFormula = document.getElementById('weightFormula');
+      
+      function updateWeightConversion() {
+        const from = weightFrom.value;
+        const fromUnit = weightFromUnit.value;
+        const toUnit = weightToUnit.value;
+        
+        if (from && !isNaN(from)) {
+          // Convert to kg first, then to target unit
+          const kg = from * weightFactors[fromUnit];
+          const converted = kg / weightFactors[toUnit];
+          
+          weightTo.value = converted.toFixed(6).replace(/\.?0+$/, '');
+          
+          // Update formula
+          const ratio = weightFactors[fromUnit] / weightFactors[toUnit];
+          weightFormula.textContent = `1 ${fromUnit} = ${ratio.toFixed(6).replace(/\.?0+$/, '')} ${toUnit}`;
+        }
+      }
+      
+      weightFrom.addEventListener('input', updateWeightConversion);
+      weightFromUnit.addEventListener('change', updateWeightConversion);
+      weightToUnit.addEventListener('change', updateWeightConversion);
+      
+      // Tab switching for conversion tools
+      lengthBtn.addEventListener('click', () => {
+        lengthBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+        tempBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        weightBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        
+        lengthConversion.classList.remove('hidden');
+        tempConversion.classList.add('hidden');
+        weightConversion.classList.add('hidden');
+        
+        updateLengthConversion();
+      });
+      
+      tempBtn.addEventListener('click', () => {
+        tempBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+        lengthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        weightBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        
+        tempConversion.classList.remove('hidden');
+        lengthConversion.classList.add('hidden');
+        weightConversion.classList.add('hidden');
+        
+        updateTempConversion();
+      });
+      
+      weightBtn.addEventListener('click', () => {
+        weightBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+        lengthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        tempBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        
+        weightConversion.classList.remove('hidden');
+        lengthConversion.classList.add('hidden');
+        tempConversion.classList.add('hidden');
+        
+        updateWeightConversion();
+      });
+      
+      // Initialize with default values
+      updateLengthConversion();
+      updateTempConversion();
+      updateWeightConversion();
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      themeUtils.initTheme();
+      initCalculator();
+      initConverters();
+    });
+  </script>
+</body>
+</html>

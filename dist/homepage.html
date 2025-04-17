@@ -1,0 +1,493 @@
+<!--
+  File: /Users/ffld/Documents/repo/projectDevTools/homepage.html
+  Author: Original Lee Dunn
+  Description: Main landing page for the Project DevTools application
+  Last Modified: 2025-04-11
+  Version: 0.1.0
+  Created: 2025-04-11
+  Last Updated: 2025-04-11
+  License: MIT
+  License URL: https://opensource.org/license/mit/
+-->
+  
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Project DevTools - Developer Tools Suite</title>
+  <!-- Include TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Include our shared CSS -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <!-- Favicon -->
+  <link rel="icon" href="assets/img/favicon.ico" type="image/x-icon">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            secondary: '#10B981',
+            tertiary: '#8B5CF6',
+            accent: '#F59E0B'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .logo-animation {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .feature-card {
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .tool-card {
+      transition: all 0.3s ease;
+    }
+    
+    .tool-card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800 min-h-screen text-gray-800 dark:text-white">
+  <!-- Header / Navigation -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <div class="flex-shrink-0 flex items-center">
+            <svg class="h-8 w-8 text-primary logo-animation" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+            </svg>
+            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-white">Project DevTools</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="dashboard/dashboard.html" class="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full" title="Dashboard">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+          </a>
+          <button id="darkModeToggle" class="flex items-center justify-center p-2 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-20">
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white">
+          Developer <span class="text-primary">Tools</span> Suite
+        </h1>
+        <p class="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+          A collection of powerful and efficient tools to boost your productivity as a developer
+        </p>
+        <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+          <div class="rounded-md shadow">
+            <a href="dashboard/dashboard.html" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
+              Open Dashboard
+            </a>
+          </div>
+
+          <div class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+            <a href="#tools" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-indigo-400 md:py-4 md:text-lg md:px-10">
+              View Tools
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-12 bg-white dark:bg-gray-800">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="lg:text-center">
+        <h2 class="text-base text-primary font-semibold tracking-wide uppercase">Features</h2>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          Everything you need in one place
+        </p>
+        <p class="mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-300 lg:mx-auto">
+          Designed for developers, by developers. Our suite of tools helps you simplify your workflow.
+        </p>
+      </div>
+
+      <div class="mt-10">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Feature 1 -->
+          <div class="pt-6 feature-card">
+            <div class="flow-root bg-gray-50 dark:bg-gray-900 rounded-lg px-6 pb-8">
+              <div class="-mt-6">
+                <div>
+                  <span class="inline-flex items-center justify-center p-3 bg-primary rounded-md shadow-lg">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Simple & Intuitive</h3>
+                <p class="mt-5 text-base text-gray-500 dark:text-gray-400">
+                  Clean, modern interfaces designed for effortless use. No complicated setup or learning curve.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="pt-6 feature-card">
+            <div class="flow-root bg-gray-50 dark:bg-gray-900 rounded-lg px-6 pb-8">
+              <div class="-mt-6">
+                <div>
+                  <span class="inline-flex items-center justify-center p-3 bg-secondary rounded-md shadow-lg">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Highly Customizable</h3>
+                <p class="mt-5 text-base text-gray-500 dark:text-gray-400">
+                  Tailor each tool to your specific needs with extensive options and settings.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="pt-6 feature-card">
+            <div class="flow-root bg-gray-50 dark:bg-gray-900 rounded-lg px-6 pb-8">
+              <div class="-mt-6">
+                <div>
+                  <span class="inline-flex items-center justify-center p-3 bg-tertiary rounded-md shadow-lg">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Secure & Private</h3>
+                <p class="mt-5 text-base text-gray-500 dark:text-gray-400">
+                  Your data stays in your browser. No server processing for most tools, ensuring your privacy.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="pt-6 feature-card">
+            <div class="flow-root bg-gray-50 dark:bg-gray-900 rounded-lg px-6 pb-8">
+              <div class="-mt-6">
+                <div>
+                  <span class="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Multiple Tools</h3>
+                <p class="mt-5 text-base text-gray-500 dark:text-gray-400">
+                  From data converters to generators, access all the tools you need under one unified interface.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="pt-6 feature-card">
+            <div class="flow-root bg-gray-50 dark:bg-gray-900 rounded-lg px-6 pb-8">
+              <div class="-mt-6">
+                <div>
+                  <span class="inline-flex items-center justify-center p-3 bg-pink-500 rounded-md shadow-lg">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Light & Dark Modes</h3>
+                <p class="mt-5 text-base text-gray-500 dark:text-gray-400">
+                  Work comfortably day or night with automatic theme detection and manual toggle.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="pt-6 feature-card">
+            <div class="flow-root bg-gray-50 dark:bg-gray-900 rounded-lg px-6 pb-8">
+              <div class="-mt-6">
+                <div>
+                  <span class="inline-flex items-center justify-center p-3 bg-green-500 rounded-md shadow-lg">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  </span>
+                </div>
+                <h3 class="mt-8 text-lg font-medium text-gray-900 dark:text-white tracking-tight">Responsive Design</h3>
+                <p class="mt-5 text-base text-gray-500 dark:text-gray-400">
+                  Use on any device - desktop, tablet, or mobile. The interface adapts to your screen size.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Tools Section -->
+  <section id="tools" class="py-12">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="lg:text-center mb-12">
+        <h2 class="text-base text-primary font-semibold tracking-wide uppercase">Our Tools</h2>
+        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          Discover What We Offer
+        </p>
+        <p class="mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-300 lg:mx-auto">
+          Choose from our collection of developer tools to simplify your daily tasks.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Password Generator Card -->
+        <div class="tool-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="h-3 bg-tertiary"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Password Generator</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Create strong, secure passwords with various options including memorable words.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">generator</span>
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">security</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a href="passwordGenerator/password_generator.html" class="bg-tertiary hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Open Tool
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Math Tool Card -->
+        <div class="tool-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="h-3 bg-primary"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Math Tool</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Perform basic mathematical operations with this simple calculator tool.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">calculator</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a href="mathTool/math_tool.html" class="bg-primary hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Open Tool
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Currency Converter Card -->
+        <div class="tool-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="h-3 bg-accent"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Currency Converter</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Convert between different currencies using up-to-date exchange rates.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">converter</span>
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">finance</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a href="currencyConverter/currency_converter.html" class="bg-accent hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Open Tool
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- JSON Formatter Card -->
+        <div class="tool-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="h-3 bg-pink-500"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white">JSON Formatter</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+              </svg>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Format, validate, and transform JSON data with pretty printing and validation.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded">formatter</span>
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded">developer</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a href="jsonFormatter/json_formatter.html" class="bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Open Tool
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Base64 Tool Card -->
+        <div class="tool-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="h-3 bg-cyan-500"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Base64 Tool</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Encode and decode Base64 strings with support for text and file conversions.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 rounded">encoder</span>
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded">utility</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a href="base64Tool/base64_tool.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Open Tool
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PowerShell Tool Card -->
+        <div class="tool-card bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="h-3 bg-blue-500"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800 dark:text-white">PowerShell Tool</h2>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Create, edit, and manage PowerShell scripts with syntax highlighting and parameter support.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">automation</span>
+              <span class="inline-block px-2 py-1 text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded">developer</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <a href="powershellTool/powershell_tool.html" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Open Tool
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="dashboard/dashboard.html" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          View All Tools in Dashboard
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-primary dark:bg-indigo-900">
+
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+      <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+        <span class="block">Ready to dive in?</span>
+        <span class="block text-indigo-200">Explore the full suite of development tools.</span>
+      </h2>
+      <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+        <div class="inline-flex rounded-md shadow">
+          <a href="dashboard/dashboard.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-indigo-50">
+            Get Started
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-16 py-6 border-t border-gray-200 dark:border-gray-700">
+
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-4 md:mb-0">
+        <p class="text-sm text-gray-600 dark:text-gray-400">© 2025 Project DevTools Dashboard. All rights reserved.</p>
+      </div>
+      <div class="flex space-x-4">
+        <a href="https://github.com/OriginalLeeDunn" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+          <span class="sr-only">GitHub</span>
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Include shared JavaScript files -->
+  <script src="assets/js/utils.js"></script>
+  
+  <script>
+    // Dark mode toggle
+    document.getElementById('darkModeToggle').addEventListener('click', () => {
+      const newTheme = themeUtils.toggleTheme();
+      
+      // Update button icon based on theme
+      const darkModeIcon = document.querySelector('#darkModeToggle svg');
+      if (newTheme === 'dark') {
+        darkModeIcon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />';
+      } else {
+        darkModeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />';
+      }
+    });
+  </script>
+
+</body>
+
+</html>
