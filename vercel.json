@@ -1,14 +1,7 @@
 {
   "version": 2,
   "routes": [
-    {
-      "src": "/(.*)",
-      "headers": {
-        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' [https://cdn.tailwindcss.com](https://cdn.tailwindcss.com); style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
-      },
-      "continue": true
-    },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/homepage.html" }
+    { "src": "/(.*)", "dest": "/dashboard/dashboard.html" }
   ]
 }
